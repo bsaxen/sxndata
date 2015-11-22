@@ -11,8 +11,8 @@
 #define SWID 41001
 #define DEVID 9999
 #define NFLOAT 2  // No of decimals i float value
-#define SIDN  4   // No of SIDs
-#define SID1 6  // Temp 1 and Control SID
+#define SIDN  1   // No of SIDs
+#define SID1 901  // Temp 1 and Control SID
 #define SID2 902  // Temp 2
 #define SID3 903  // Temp 3
 #define SID4 904  // Temp 4
@@ -26,21 +26,6 @@
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 char server[] = "192.168.1.97";  
 int g_sids[10] = {SIDN,SID1,SID2,SID3,SID4,SID5,SID6,SID7,SID8};
-//unsigned long g_time1=0,g_time2=0,g_delta,g_now, g_last[MAX_SID];
-//unsigned long g_one_sec = 1000; // resolution of heartbeat =  1000 msec
-//int g_on[MAX_ORDERS];    // Arduino - RPi interface par type
-//int g_value[MAX_ORDERS]; // Arduino - RPi interface par value
-//int g_sidHb[MAX_SID];
-//int g_sidHbUnit[MAX_SID];
-//int g_sidDelay[MAX_SID]; // Always in sec
-//int g_sidCountDown[MAX_SID];
-//char g_errmsg[120];  // Error message
-//int g_error = 0;     // Error flag
-//char g_logmsg[120];  // Log message
-//int g_log = 0;       // Log flag
-//int g_state = NO_SYNC; 
-//char g_res[120];
-//int g_counter = 0;
 int g_device_delay = 3;
 
 // Arduino-RPi protocol
@@ -178,9 +163,9 @@ void NB_sendToGwy(int mid, int sid, float data, int other)
        int part2 = ftemp; 
        if(part2 < 0)part2 = part2*(-1.0);
        if(part2 < 10)
-         sprintf(msg2,"&devid=%d&swid=%d&data=%d.0%d",DEVID,SWID,part1,part2);
+         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
        else 
-         sprintf(msg2,"&devid=%d&swid=%d&data=%d.%d",DEVID,SWID,part1,part2);
+         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
        strcat(msg1,msg2);
      }
      //sprintf(checksum,": %d",strlen(msg1));

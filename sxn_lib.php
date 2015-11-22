@@ -1,6 +1,6 @@
 <?php
 require_once('sxn_definition.php');
-define ("DEBUG_MODE", "off", true);
+define ("DEBUG_MODE", "on", true);
 //==============================================================================
 //Class DataManager
 //Author: asaxen

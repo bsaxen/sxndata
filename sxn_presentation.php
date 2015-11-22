@@ -11,14 +11,6 @@
 				<canvas id="canvas" height="450" width=600"></canvas>
 			</div>
 		</div>
-
-
-	<script>
-
-
-		var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
-		var lineChartData = {
-                                 
 <?php
 require_once('sxn_lib.php');
 require_once('sxn_definition.php');
@@ -27,12 +19,99 @@ require_once('sxn_definition.php');
   $g_dbM2 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_COLLECTOR);
   $g_dbM3 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_CONTROL);
 //================================================================
-$lim = 100;
+
+
+
+
+?>
+                                                           
+
+	<script>
+
+
+		var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+		var lineChartData = {
+                                 
+<?php
+function getIndex($res, $ts, $left,$right)
+{
+    $timeX   = strtotime($ts);
+    $yearX    =  date('Y', $time);
+    $monthX   =  date('m', $time);
+    $dayX     =  date('d', $time);
+    $hourX    =  date('h', $time);
+    $minuteX  =  date('i', $time);
+    $secondX  =  date('s', $time);
+    
+    $timeL   = strtotime($left);
+    $yearL    =  date('Y', $time);
+    $monthL   =  date('m', $time);
+    $dayL     =  date('d', $time);
+    $hourL    =  date('h', $time);
+    $minuteL  =  date('i', $time);
+    $secondL  =  date('s', $time);
+    
+    $timeR   = strtotime($right);
+    $yearR    =  date('Y', $time);
+    $monthR   =  date('m', $time);
+    $dayR     =  date('d', $time);
+    $hourR    =  date('h', $time);
+    $minuteR  =  date('i', $time);
+    $secondR  =  date('s', $time);
+    
+    if($res == 1) // years
+    {
+        $index = $hour*60 + $minute;
+    }
+    if($res == 2) // months
+    {
+        $index = $hour*60 + $minute;
+    }
+    if($res == 3) // days
+    {
+        $index = $hour*60 + $minute;
+    }
+    if($res == 4) // hours
+    {
+        $index = $hour*60 + $minute;
+    }
+    if($res == 5) // minutes
+    {
+        $index = $hour*60 + $minute;
+    }
+    if($res == 6) // seconds
+    {
+        $index = $hour*3600 + $minute*60 + $second;
+    }
+    return($index);
+}
+//$resolution = 3;
+//$lim = 24*3600;
+//$div = 3600;
+$resolution = 5;
+$lim = 24*60;
+$div = 60;
+//$resolution = 1;
+//$lim = 24;
+//$div = 1;
+
 echo("labels : [");
+//while($data = $g_dbM2->retrieveResult())
+//{
+//    $time = $data[SXN_GENERAL_COLUMN_TIMESTAMP]; 
+//    $date = DateTime::createFromFormat( 'Y-m-d H:i:s', $time, new DateTimeZone( 'America/New_York'));
+//    echo $date->format( 's');
+//    //echo $date->format( 'H i s');
+//    echo(",");
+//}
+$hour=0;
 for($ii=1;$ii<$lim;$ii++)
 {
-    if($ii%100 == 0)
-      echo("$ii,");
+    if($ii%$div == 0)
+    {
+      $hour++;
+      echo("$hour,");
+    }
     else 
       echo("\" \",");
 }
@@ -49,9 +128,30 @@ echo("\".\"],");
 					pointHighlightFill : "#0ff",
 					pointHighlightStroke : "rgba(220,220,220,1)",
 <?php
+$s_sid = 901;
+$query = "SELECT * from ".SXN_COLLECTOR_TABLE_DATA_PREFIX.$s_sid;
+//$query = "SELECT * from ".SXN_COLLECTOR_TABLE_DATA_PREFIX.$s_sid WHERE ".SXN_GENERAL_COLUMN_TIMESTAMP." BETWEEN '2015-11-22' AND '2015-11-22'";
+//echo("$query<br>");
+$g_dbM2->selectFromQuery($query);
 echo("data : [");
-for($ii=1;$ii<$lim;$ii++)echo("randomScalingFactor(),");
-echo("randomScalingFactor()]");
+$ii=0;
+while($data = $g_dbM2->retrieveResult())
+{
+    $ii++;
+    $value = $data[SXN_COLLECTOR_DATA_COLUMN_VALUE]; 
+    $timestamp = $data[SXN_GENERAL_COLUMN_TIMESTAMP];
+    //$date = DateTime::createFromFormat( 'Y-m-d H:i:s', $time, new DateTimeZone( 'America/New_York'));
+    $index = getIndex($resolution,$timestamp,$leftX,$rightX);
+    $temp[$ii] = $value;
+    $lim = $ii;
+}
+for($ii=1;$ii<=$lim;$ii++)
+{
+  echo("$temp[$ii],");  
+}
+echo("$temp[$ii]]");
+//for($ii=1;$ii<$lim;$ii++)echo("randomScalingFactor(),");
+//echo("randomScalingFactor()]");
 //================================================================
 echo("				},");
 ?>
@@ -64,10 +164,21 @@ echo("				},");
 					pointHighlightFill : "#fff",
 					pointHighlightStroke : "rgba(151,187,205,1)",
 <?php
-
+$s_sid = 901;
+$query = "SELECT * from ".SXN_COLLECTOR_TABLE_DATA_PREFIX."$s_sid";
+//echo("$query<br>");
+$g_dbM2->selectFromQuery($query);
 echo("data : [");
-for($ii=1;$ii<$lim;$ii++)echo("randomScalingFactor(),");
-echo("randomScalingFactor()]");
+while($data = $g_dbM2->retrieveResult())
+{
+    $temp = $data[SXN_COLLECTOR_DATA_COLUMN_VALUE]; 
+    $temp = $temp + 10;
+    echo("$temp,");
+}
+echo("$temp]");
+
+//for($ii=1;$ii<$lim;$ii++)echo("randomScalingFactor(),");
+//echo("randomScalingFactor()]");
 //===============================================================
 echo("				}");
 ?>

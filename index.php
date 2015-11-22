@@ -2,7 +2,7 @@
 require_once('sxn_definition.php');
 require_once('sxn_lib.php');
 
-//define ("DEBUG_MODE", "off", true);
+//define ("DEBUG_MODE", "on", true);
 
 //==============================================================================
 //Class DataManager
@@ -19,7 +19,7 @@ class DataCollector
 
 	public function __construct($user, $pass, $server, $dbName)
 	{
-		//echo "-SXN_DATABASE_COLLECTOR created \n";
+		if(DEBUG_MODE == 'on')echo "-SXN_DATABASE_COLLECTOR created \n";
 		$this->username_   = $user;
 		$this->password_   = $pass;
 		$this->server_     = $server;
@@ -35,7 +35,7 @@ class DataCollector
 
 	public function openDataBase()
 	{
-		//echo "-Opening database\n";
+		if(DEBUG_MODE == 'on')echo "-Opening database\n";
 
 		$this->mysqli_ = new mysqli($this->server_,
 									$this->username_,
@@ -66,7 +66,7 @@ class DataCollector
 
 			if ($doesTableExist)
 			{
-				if(DEBUG_MODE == 'on')echo "Sid is ok! \n";
+				if(DEBUG_MODE == 'on')echo "Sid=$sid is ok! data=$data\n";
 			    $param = SXN_COLLECTOR_DATA_COLUMN_VALUE;
 				$this->mysqli_->query("INSERT INTO $tableName ($param) VALUES ($data)");
 
@@ -74,7 +74,7 @@ class DataCollector
 			}
 			else
 			{
-				if(DEBUG_MODE == 'on')echo "Sid does not exists! \n";
+				if(DEBUG_MODE == 'on')echo "Sid=$sid does not exists! \n";
 				
 			}
 		}
@@ -170,6 +170,7 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 		  {
 			 if($mid == SXN_DATA)
 			 {
+                  //echo SXN_USER, SXN_PASSWORD, \"localhost\", SXN_DATABASE_COLLECTOR)";
 		    	   $dbC = new DataCollector (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_COLLECTOR);
 				   $dbC->openDataBase();
 				   $success = $dbC->insertData($sid, $dd);
@@ -179,7 +180,7 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
               
              if($mid == SXN_LATEST)
              {
-                 echo("hej");
+                 //echo("hej");
                  getLatestValue($sid);
              }
              if($mid == SXN_MAILBOX)
