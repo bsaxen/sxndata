@@ -301,8 +301,8 @@ var svg = d3.select("body").append("svg")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 <?php
-//echo("var url = \"http://localhost/sxndata/sql.php?sid=$s_sid\";");
-echo("var url = \"sql.php?sid=$s_sid\";");
+
+echo("var url = \"sql.php?sid=$s_sid&startDate=$startDate&endDate=$endDate\";");
 ?>
      
 d3.json(url, function(error, json) 
@@ -324,6 +324,7 @@ echo("
     //var tsx = d3.min(gdata, function(d) { return d.ts; })
     
     //alert(d3.extent(gdata, function(d) { return d.ts; }));
+    //alert(d3.extent(gdata, function(d) { return d.nb_value; }));
     
     
    svg.append("g")

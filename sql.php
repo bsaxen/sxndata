@@ -4,9 +4,26 @@ require_once('sxn_definition.php');
     //$sid = $_GET['sid'];
     //parse_str(implode('&', array_slice($argv, 1)), $_GET);
     $sid = (isset($_GET['sid']) ? $_GET['sid'] : null);
-    //$sid = $_GET['sid'];
+
+    $date = (isset($_GET['startDate']) ? $_GET['startDate'] : null);
+//echo("1 $startDate<br>");
+    //$date = DateTime::createFromFormat('m/d/Y', $startDate);
+    //$date = str_replace('/', '-', $startDate);
+//echo("1 $date<br>");
+    $tStart = date('Y-m-d', strtotime($date));
+//echo("1 $tStart<br>");
+
+    $date = (isset($_GET['endDate']) ? $_GET['endDate'] : null); 
+//echo("2 $endDate<br>");
+   // $date = str_replace('/', '-', $endDate);
+//echo("2 $date<br>");
+    $tEnd = date('Y-m-d', strtotime($date));
+//echo("2 $tEnd<br>");
+    //$tStart = '2015-12-01';
+    //$tEnd = '2015-12-20';
+
     if(!$sid)$sid = 901;
-    //echo("**** sid=$sid ****"); die;
+    //echo("**** sid=$sid ****"); 
     $username = "root"; 
     $password = "amazon";   
     $host = "localhost";
@@ -32,7 +49,8 @@ require_once('sxn_definition.php');
     $database="nb_db_collector";
     $server = mysql_connect($host, $username, $password);
     $connection = mysql_select_db($database, $server);
-    $myquery = "SELECT id, ts, nb_value FROM  nb_data_$sid WHERE id < 10000";
+    $myquery = "SELECT * FROM  nb_data_$sid WHERE ts BETWEEN '$tStart' AND '$tEnd'";
+//echo("$myquery");
     $query = mysql_query($myquery);
     if ( ! $query ) {
         echo mysql_error();
