@@ -1,7 +1,7 @@
 <?php
 require_once('sxn_definition.php');
+require_once('sxn_sql_lib.php');
 require_once('sxn_lib.php');
-
 //define ("DEBUG_MODE", "on", true);
 
 //==============================================================================

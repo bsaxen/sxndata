@@ -1,27 +1,117 @@
 
 <?php
+session_start(); 
 
-
-require_once('sxn_lib.php');
+require_once('sxn_sql_lib.php');
 require_once('sxn_definition.php');
+require_once('sxn_lib.php');
 
   $g_dbM1 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_ADMIN);
   $g_dbM2 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_COLLECTOR);
   $g_dbM3 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_CONTROL);
 
+$startDate    = $_SESSION['startDate'];
+$endDate      = $_SESSION['endDate'];
+$xZoom    = $_SESSION['xZoom'];
+$yZoom    = $_SESSION['yZoom'];
+$s_sid    = $_SESSION['s_sid'];
 
+//$jsonX = SXN_GENERAL_COLUMN_ID;
+//$jsonX = SXN_GENERAL_COLUMN_TIMESTAMP;
+$jsonX = 'ts';
+$jsonY = SXN_COLLECTOR_DATA_COLUMN_VALUE;
+
+//$tsMin = (isset($_GET['tsmin']) ? $_GET['tsmin'] : null);
+//$tsMax = (isset($_GET['tsmax']) ? $_GET['tsmax'] : null);
+
+
+if(isset($_GET['date1']))
+    $startDate = (isset($_GET['date1']) ? $_GET['date1'] : null);
+if(isset($_GET['date2']))
+    $endDate = (isset($_GET['date2']) ? $_GET['date2'] : null);
+
+echo("Start Date: $startDate  End Date: $endDate<br>");
 $do = (isset($_GET['do']) ? $_GET['do'] : null);
 
 if($do=="select_sid")
 {
  $s_sid = $_GET['sid'];   
 }
+if($do=="xzoom")
+{
+ $xZoom = $_GET['xZoom'];   
+}
+if($do=="yzoom")
+{ 
+ $yZoom = $_GET['yZoom'];   
+}
 
-$xmin = 0; $xmax = 2000;
-$ymin = 0; $ymax = 50;
+$yLabel = 'kWh';
+// Set axis scale according to SID
+if($s_sid)
+{
+    $stemp = SXN_COLLECTOR_TABLE_DATA_PREFIX.$s_sid; 
+    
+    
+    $g_dbM2->selectAllFromTable($stemp, "");
+    $numRes = $g_dbM2->retrieveNumberOfResults();
+    echo("Number of data for SID $s_sid: $numRes<br>");
+    
+    $g_dbM2->selectMaxValue($stemp,SXN_COLLECTOR_DATA_COLUMN_VALUE);
+	$numRes = $g_dbM2->retrieveNumberOfResults();
+	if($numRes>0)
+	{
+		$data = $g_dbM2->retrieveResult();
+        $ymax = $data[0];
+        //echo("max=$data[0]<br>");
+	}
+    $g_dbM2->selectMinValue($stemp,SXN_COLLECTOR_DATA_COLUMN_VALUE);
+	$numRes = $g_dbM2->retrieveNumberOfResults();
+	if($numRes>0)
+	{
+		$data = $g_dbM2->retrieveResult();
+        $ymin = $data[0];
+        //echo("max=$data[0]<br>");
+	}
+    
+//    $g_dbM2->selectMaxValue($stemp,SXN_GENERAL_COLUMN_TIMESTAMP);
+//	$numRes = $g_dbM2->retrieveNumberOfResults();
+//	if($numRes>0)
+//	{
+//		$data = $g_dbM2->retrieveResult();
+//        $xmax = $data[0];
+//        echo("max=$data[0]<br>");
+//	}
+//    $g_dbM2->selectMinValue($stemp,SXN_GENERAL_COLUMN_TIMESTAMP);
+//	$numRes = $g_dbM2->retrieveNumberOfResults();
+//	if($numRes>0)
+//	{
+//		$data = $g_dbM2->retrieveResult();
+//        $xmin = $data[0];
+//        echo("mon=$data[0]<br>");
+//	}
+//    $minDate = new DateTime ($xmin);
+//    $maxDate = new DateTime ($xmax);
+//    $tsMin = $minDate->format(DateTime::ISO8601);
+//    $tsMax = $maxDate->format(DateTime::ISO8601);
+//    //$tsMin = $minDate->getTimestamp();
+//    //$tsMax = $maxDate->getTimestamp();
+//    //$delta = $tsMax - $tsMin;
+//    echo(" $tsMin $tsMax <br>");
+//    //$xmin = 0; $xmax = 2000;
+}
+
+$_SESSION['startDate'] = $startDate;
+$_SESSION['endDate']   = $endDate; 
+$_SESSION['xZoom'] = $xZoom; 
+$_SESSION['yZoom'] = $yZoom;
+$_SESSION['s_sid'] = $s_sid; 
+
 ?>
 
+
 <!DOCTYPE html>
+<head>
 <meta charset="utf-8">
 <style>
 
@@ -70,12 +160,52 @@ body {
 }
 
 </style>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  
+  <script src="../calendar/jquery-ui-1.11.4.custom/external/jquery/jquery.js"></script>
+  <script src="../calendar/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+  <link rel="stylesheet" href="../calendar/jquery-ui-1.11.4.custom/jquery-ui.css">
+  <script>
+  $(function() {
+    $( "#startDate" ).datepicker();
+  });
+  $(function() {
+    $( "#endDate" ).datepicker();
+  });
+  </script>
+    
+</head>
 
 <body>
+<?php
+ echo("Zoom ");
+ if($xZoom==1)
+     echo("X <a href=\"sxn_presentation.php?do=xzoom&xZoom=2\">ON</a>");
+ else
+    echo("X <a href=\"sxn_presentation.php?do=xzoom&xZoom=1\">OFF</a>");
+ if($yZoom==1)
+     echo(" Y <a href=\"sxn_presentation.php?do=yzoom&yZoom=2\">ON</a><br>");
+ else
+    echo(" Y <a href=\"sxn_presentation.php?do=yzoom&yZoom=1\">OFF</a><br>"); 
+
+ ?>
+
+   
+<form name="myForm" action="sxn_presentation.php" onsubmit="return validateForm()" method="get"> 
+<?php
+echo(" From <input type=\"text\" id=\"startDate\" name=\"date1\" value=\"$startDate\" />");
+echo(" To <input type=\"text\" id=\"endDate\" name=\"date2\" value=\"$endDate\" />");
+?>
+<input type="submit" name="submit" value="Submit" />
+</form>
+
+   
+    
     
 <script src="../d3/d3.min.js"></script>
 
-<script>
+
+<script>   
 var gdata; 
 
 var colors = [
@@ -87,15 +217,32 @@ var colors = [
 var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
+    
 
-var parseDate = d3.time.format("%d-%b-%y").parse;
+//var format = d3.time.format("%Y-%m-%d %H:%M:%S");
+
+var parseDate = d3.time.format("%Y-%m-%d %H:%M:%S").parse;
 
 
 
 <?php
+//echo("
+// var x = d3.scale.linear()
+//    .domain([$xmin,$xmax])
+//");
+
+//alert("benny");
+//$tsMin = 'Wed Dec 01 2015 11:11:17 GMT+0100(CEST)';
+//$tsMax = 'Wed Dec 04 2015 11:11:17 GMT+0100(CEST)';
+//$tsMin = '2015-12-01 11:11:17';
+//$tsMax = '2015-12-05 11:11:17';
+//$tsMin = '2015-05-16';
+//$tsMax = '2015-05-17';
+$tsMin = $startDate;
+$tsMax = $endDate;
 echo("
- var x = d3.scale.linear()
-    .domain([$xmin,$xmax])
+ var x = d3.time.scale()
+    .domain([new Date('$tsMin'),new Date('$tsMax')])
 ");
 ?>
     .range([0, width]);
@@ -125,17 +272,23 @@ var yAxis = d3.svg.axis()
 	.tickSubdivide(true)	
     .orient("left");
 
-
-var zoom = d3.behavior.zoom()
-    .x(x)
-    .y(y)
+<?php
+echo("var zoom = d3.behavior.zoom()");
+if($xZoom == 1)echo("    .x(x)");
+if($yZoom == 1)echo("    .y(y)");
     //.scaleExtent([1, 50])
-    .on("zoom", zoomed);
-
+ echo("   .on(\"zoom\", zoomed);");
+?>
+    
 var line = d3.svg.line()
     .interpolate("linear")	
-    .x(function(d) { return x(d.id); })
-    .y(function(d) { return y(d.nb_value); });			
+<?php
+echo("
+    .x(function(d) { return x(d.$jsonX); })
+    .y(function(d) { return y(d.$jsonY); });	
+    ");
+?>
+
 //************************************************************
 // Generate our SVG object
 //************************************************************	
@@ -156,6 +309,23 @@ d3.json(url, function(error, json)
 {
    if (error) throw error;
    gdata = json;
+<?php
+echo("
+   gdata.forEach(function(d) {
+    d.$jsonX = parseDate(d.$jsonX);
+   });
+   ");
+?>
+    
+   //x.domain(d3.extent(gdata, function(d) { return d.ts; }));
+   //y.domain([0, d3.max(gdata, function(d) { return d.nb_value; })]);
+    
+   // var tsi = d3.max(gdata, function(d) { return d.ts; })
+    //var tsx = d3.min(gdata, function(d) { return d.ts; })
+    
+    //alert(d3.extent(gdata, function(d) { return d.ts; }));
+    
+    
    svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
@@ -172,7 +342,9 @@ d3.json(url, function(error, json)
 	.attr("transform", "rotate(-90)")
 	.attr("y", (-margin.left) + 10)
 	.attr("x", -height/2)
-	.text('Electric kWh');	
+<?php
+	echo(".text('$yLabel');");
+?>
 
    svg.append("path")
         .attr("class", "line")
@@ -188,6 +360,7 @@ function zoomed() {
 	svg.select(".x.axis").call(xAxis);
 	svg.select(".y.axis").call(yAxis);   
 	svg.select('path.line').attr('d', line(gdata)); 
+    //d3.select("#footer span").text("U.S. Commercial Flights, " + x.domain().map(format).join("-"));
 }
 
 </script>
@@ -197,22 +370,24 @@ function zoomed() {
 //
 //
 //=============================================================
-echo("Selected SID=$s_sid<br>");
 
-if($s_sid)
-{
-$query = "SELECT * from ".SXN_COLLECTOR_TABLE_DATA_PREFIX.$s_sid;
-echo("$query<br>");
-$g_dbM2->selectFromQuery($query);
-
-while($data = $g_dbM2->retrieveResult())
-{
-    $temp = $data[SXN_COLLECTOR_DATA_COLUMN_VALUE]; 
-    $temp = $temp + 10;
-    //echo("$temp,");
-}
-}
-
+//if($s_sid)
+//{
+//$query = "SELECT * from ".SXN_COLLECTOR_TABLE_DATA_PREFIX.$s_sid;
+//echo("$query<br>");
+//$g_dbM2->selectFromQuery($query);
+//
+//while($data = $g_dbM2->retrieveResult())
+//{
+//    $temp = $data[SXN_COLLECTOR_DATA_COLUMN_VALUE]; 
+//    $temp = $temp + 10;
+//    //echo("$temp,");
+//}
+//}
+   readDataTypes(); 
+   $g_dbM1->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS, "");
+   $numRes = $g_dbM1->retrieveNumberOfResults();
+   echo("<br>Number of SIDs: $numRes<br>");
    echo("<table border=\"1\">");
      echo("<tr>");
      echo("<td>SID</td> ");
@@ -226,7 +401,7 @@ while($data = $g_dbM2->retrieveResult())
      echo("<td>TIMESTAMP</td>");
      //echo("<td>Action</td>");
      echo("</tr>");
-   $g_dbM1->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS, "");
+ 
    while($data = $g_dbM1->retrieveResult())
    {
     $id          = $data[SXN_GENERAL_COLUMN_ID];
@@ -245,7 +420,7 @@ while($data = $g_dbM2->retrieveResult())
      echo("<tr>");
      echo("<td><a href=\"sxn_presentation.php?do=select_sid&sid=$sid\">$sid </a></td> ");
      echo("<td>$type</td>");
-     echo("<td>$unit</td>");
+     echo("<td>$g_data_name[$unit] ($g_data_unit[$unit])</td>");
      echo("<td>$title</td>");
      echo("<td>$tag</td>");
      echo("<td>$description</td>");
