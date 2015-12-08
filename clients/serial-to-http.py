@@ -50,7 +50,7 @@ while 1:
         if sxn_debug == 'YES':
             print t_req
         url=t_req.split(":")
-        if sxn_debug == 1:
+        if sxn_debug == 'YES':
             print 'x'+url[0]+'xz'+url[1]+'z'
         if url[0][0] == '?' and url[1][0] == ' ':
             slen = len(url[0])

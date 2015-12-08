@@ -4,16 +4,17 @@
 // History
 //==================================================
 // Software Id: 11201 2015-11-21	First version
+// 2015-12-08: support sidApp controlSaxenHeater
 //==================================================
-#define SWID 11201
-#define DEVID 9999
+#define SWID 2015
+#define DEVID 1208 
 // Adjust these paramaters acording to specific application
 #define NFLOAT 2  // No of decimals i float value
-#define SIDN  1   // No of SIDs
-#define SID1 901  
-#define SID2 902  
-#define SID3 903 
-#define SID4 904 
+#define SIDN  4   // No of SIDs
+#define SID1 1  
+#define SID2 2  
+#define SID3 3 
+#define SID4 4 
 #define SID5 905  
 #define SID6 906
 #define SID7 907
@@ -25,7 +26,7 @@
 #define MAX_SID 10
 #define MAX_ORDERS 100
 int g_sids[10] = {SIDN,SID1,SID2,SID3,SID4,SID5,SID6,SID7,SID8};
-int g_device_delay = 1;
+int g_device_delay = 20;
 
 // Arduino-RPi protocol
 #define NABTON_DATA     1 
@@ -214,6 +215,36 @@ void NB_sendToGwy(int mid, int sid, float data, int other)
      digitalWrite(5,LOW);
 }
 //=================================================
+void SXN_sendToGwy(int mid, int sid, float data, int other)
+//=================================================
+{
+  int ixSid = 0,i;
+  char msg1[100],msg2[50],checksum[20];
+     strcpy(msg1," ");
+     strcpy(msg2," ");
+     digitalWrite(5,HIGH);
+     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,nsensors,sid);
+     if(mid == NABTON_DATA)
+     {
+       int part1 = int(data);
+       float ftemp = (data - part1);
+       for(i=1;i<=NFLOAT;i++)ftemp=ftemp*10;
+       int part2 = ftemp; 
+       if(part2 < 0)part2 = part2*(-1.0);
+       if(part2 < 10)
+         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
+       else 
+         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
+       if(part2 < 0)part2 = part2*(-1.0);
+       strcat(msg1,msg2);
+     }
+     sprintf(checksum,": %d",strlen(msg1));
+     strcat(msg1,checksum);
+
+     Serial.println(msg1);
+     digitalWrite(5,LOW);
+}
+//=================================================
 void recSerial()
 //=================================================
 {
@@ -334,12 +365,12 @@ void setup()
   g_sids[7] = SID7;
   g_sids[8] = SID8;
 
-  sprintf(dl[1],"%d",SWID);
-  sprintf(dm[1],"%d",DEVID);
-  sprintf(dr[1],"%d",g_device_delay);
+  sprintf(dr[1],"%d",SWID);
+  sprintf(dr[2],"%d",DEVID);
+  sprintf(dr[3],"%d",g_device_delay);
   for(i=1;i<=SIDN;i++)
   {
-    sprintf(dr[i+1],"%d",g_sids[i]);
+    sprintf(dm[i],"%d",g_sids[i]);
   }
 
   NB_oledDraw();
@@ -358,13 +389,12 @@ void loop()
     {
       tempC = sensors.getTempC(device[i-1]);    
       str = String(tempC);
-      str.toCharArray(dl[i+1],8); 
-      if(tempC != -127)NB_sendToGwy(NABTON_DATA,g_sids[i],tempC,0);
+      str.toCharArray(dl[i],8); 
+      if(tempC != -127)SXN_sendToGwy(NABTON_DATA,g_sids[i],tempC,0);
       delay(g_device_delay*1000);  
       recSerial(); 
       NB_oledDraw();
     }
  
 }
-
 
