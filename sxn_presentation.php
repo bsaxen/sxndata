@@ -2,18 +2,25 @@
 <?php
 session_start(); 
 
+//require_once('sxn_definition.php');
 require_once('sxn_sql_lib.php');
-require_once('sxn_definition.php');
 require_once('sxn_lib.php');
 
-  $g_dbM1 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_ADMIN);
-  $g_dbM2 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_COLLECTOR);
-  $g_dbM3 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_CONTROL);
+
 
 $startDate    = $_SESSION['startDate'];
 $endDate      = $_SESSION['endDate'];
+
+if(!startDate)
+{
+     $startDate = date("Y-m-d");
+     $endDate   = date("Y-m-d");
+}
+
 $xZoom    = $_SESSION['xZoom'];
+if(!$xZoom) $xZoom = 1;
 $yZoom    = $_SESSION['yZoom'];
+if(!$yZoom) $yZoom = 1;
 $s_sid    = $_SESSION['s_sid'];
 
 //$jsonX = SXN_GENERAL_COLUMN_ID;
@@ -26,9 +33,20 @@ $jsonY = SXN_COLLECTOR_DATA_COLUMN_VALUE;
 
 
 if(isset($_GET['date1']))
+{
     $startDate = (isset($_GET['date1']) ? $_GET['date1'] : null);
+    $startDate = date('Y-m-d', strtotime($startDate));
+    //$startDate = $startDate.' 00:00:00';
+}
 if(isset($_GET['date2']))
+{
     $endDate = (isset($_GET['date2']) ? $_GET['date2'] : null);
+    $endDate = date('Y-m-d', strtotime($endDate));
+    //$endDate = $endDate.' 23:59:59';
+}
+
+//$tStart = date('Y-m-d', strtotime($startDate));
+//$tEnd   = date('Y-m-d', strtotime($endDate));
 
 echo("Start Date: $startDate  End Date: $endDate<br>");
 $do = (isset($_GET['do']) ? $_GET['do'] : null);
@@ -45,6 +63,12 @@ if($do=="yzoom")
 { 
  $yZoom = $_GET['yZoom'];   
 }
+if($do=="today")
+{
+     $startDate = date("Y-m-d");
+     $endDate   = date("Y-m-d");
+}
+
 
 $yLabel = 'kWh';
 // Set axis scale according to SID
@@ -52,8 +76,8 @@ if($s_sid)
 {
     $stemp = SXN_COLLECTOR_TABLE_DATA_PREFIX.$s_sid; 
     
-    
-    $g_dbM2->selectAllFromTable($stemp, "");
+    //echo("WHERE ts BETWEEN '$tStart 00:00:00' AND '$tEnd 23:59:59'");
+    $g_dbM2->selectAllFromTable($stemp, "ts BETWEEN '$startDate 00:00:00' AND '$endDate 23:59:59'");
     $numRes = $g_dbM2->retrieveNumberOfResults();
     echo("Number of data for SID $s_sid: $numRes<br>");
     
@@ -184,9 +208,12 @@ body {
  else
     echo("X <a href=\"sxn_presentation.php?do=xzoom&xZoom=1\">OFF</a>");
  if($yZoom==1)
-     echo(" Y <a href=\"sxn_presentation.php?do=yzoom&yZoom=2\">ON</a><br>");
+     echo(" Y <a href=\"sxn_presentation.php?do=yzoom&yZoom=2\">ON</a>");
  else
-    echo(" Y <a href=\"sxn_presentation.php?do=yzoom&yZoom=1\">OFF</a><br>"); 
+    echo(" Y <a href=\"sxn_presentation.php?do=yzoom&yZoom=1\">OFF</a> "); 
+
+     
+ echo("   <a href=\"sxn_presentation.php?do=today\">Today</a><br>"); 
 
  ?>
 
@@ -238,8 +265,9 @@ var parseDate = d3.time.format("%Y-%m-%d %H:%M:%S").parse;
 //$tsMax = '2015-12-05 11:11:17';
 //$tsMin = '2015-05-16';
 //$tsMax = '2015-05-17';
-$tsMin = $startDate;
-$tsMax = $endDate;
+$tsMin = $startDate.' 00:00:00';
+$tsMax = $endDate.' 23:59:59';
+//echo("$tsMin $tsMax");
 echo("
  var x = d3.time.scale()
     .domain([new Date('$tsMin'),new Date('$tsMax')])

@@ -1,6 +1,7 @@
 <?php
-require_once('sxn_sql_lib.php');
 require_once('sxn_definition.php');
+require_once('sxn_sql_lib.php');
+
     //$sid = $_GET['sid'];
     //parse_str(implode('&', array_slice($argv, 1)), $_GET);
     $sid = (isset($_GET['sid']) ? $_GET['sid'] : null);
@@ -49,7 +50,7 @@ require_once('sxn_definition.php');
     $database="nb_db_collector";
     $server = mysql_connect($host, $username, $password);
     $connection = mysql_select_db($database, $server);
-    $myquery = "SELECT * FROM  nb_data_$sid WHERE ts BETWEEN '$tStart' AND '$tEnd'";
+    $myquery = "SELECT * FROM  nb_data_$sid WHERE ts BETWEEN '$tStart 00:00:00' AND '$tEnd 23:59:59'";
 //echo("$myquery");
     $query = mysql_query($myquery);
     if ( ! $query ) {

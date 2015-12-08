@@ -1,7 +1,8 @@
 <?php
-require_once('sxn_definition.php');
+//require_once('sxn_definition.php');
 require_once('sxn_sql_lib.php');
 require_once('sxn_lib.php');
+require_once('sxn_sidFunctions.php');
 //define ("DEBUG_MODE", "on", true);
 
 //==============================================================================
@@ -53,7 +54,7 @@ class DataCollector
 
 	public function closeDataBase()
 	{
-		if(DEBUG_MODE == 'on')echo "-Closeing database\n ";
+		if(DEBUG_MODE == 'on')echo "-Closing database\n ";
 		$this->mysqli_->close();
 	}
 
@@ -114,23 +115,6 @@ function getControlMessage($sid) {
 						.SXN_CONTROL_COMMANDS_COLUMN_STATUS."="."'new'");
 	}
 }
-function getLatestValue($sid) {
-   echo("hej2");
-	$dbM = new DataManager(SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_COLLECTOR);
-    $stemp = SXN_COLLECTOR_TABLE_DATA_PREFIX.$sid;
-    echo $stemp;
-	$dbM->selectMaxValue($stemp,SXN_GENERAL_COLUMN_ID);
-	$numRes = $dbM->retrieveNumberOfResults();
-  echo("hej3 $numRes ***");
-	if($numRes>0)
-	{
-		while($data = $dbM->retrieveResult())
-		{
-            $stemp = SXN_COLLECTOR_DATA_COLUMN_VALUE;
-		    echo $data[$stemp]." ??\n";
-		}
-	}
-}
 
 //==============================================================================
 // Main program
@@ -142,23 +126,36 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 	//Data from request
 	$mid  = $_GET["mid"];
     $nsid  = $_GET["nsid"];
-    if($nsid > 9 || $nsid < 1) die;
+
+                   if($nsid > 9 || $nsid < 1) die;
     
-    if($nsid > 0) {$msid[1]  = $_GET["sid1"];$dat[1]  = $_GET["dat1"];}
-    if($nsid > 1) {$msid[2]  = $_GET["sid2"];$dat[2]  = $_GET["dat2"];}
-    if($nsid > 2) {$msid[3]  = $_GET["sid3"];$dat[3]  = $_GET["dat3"];}
-    if($nsid > 3) {$msid[4]  = $_GET["sid4"];$dat[4]  = $_GET["dat4"];}
-    if($nsid > 4) {$msid[5]  = $_GET["sid5"];$dat[5]  = $_GET["dat5"];}
-    if($nsid > 5) {$msid[6]  = $_GET["sid6"];$dat[6]  = $_GET["dat6"];}
-    if($nsid > 6) {$msid[7]  = $_GET["sid7"];$dat[7]  = $_GET["dat7"];}
-    if($nsid > 7) {$msid[8]  = $_GET["sid8"];$dat[8]  = $_GET["dat8"];}
-    if($nsid > 8) {$msid[9]  = $_GET["sid9"];$dat[9]  = $_GET["dat9"];}
+                   if($nsid > 0) {$msid[1]  = $_GET["sid1"];}
+                   if($nsid > 1) {$msid[2]  = $_GET["sid2"];}
+                   if($nsid > 2) {$msid[3]  = $_GET["sid3"];}
+                   if($nsid > 3) {$msid[4]  = $_GET["sid4"];}
+                   if($nsid > 4) {$msid[5]  = $_GET["sid5"];}
+                   if($nsid > 5) {$msid[6]  = $_GET["sid6"];}
+                   if($nsid > 6) {$msid[7]  = $_GET["sid7"];}
+                   if($nsid > 7) {$msid[8]  = $_GET["sid8"];}
+                   if($nsid > 8) {$msid[9]  = $_GET["sid9"];}
     
+    if($mid == SXN_DATA)
+    {
+        $dat[1]  = $_GET["dat1"];
+        $dat[2]  = $_GET["dat2"];
+        $dat[3]  = $_GET["dat3"];
+        $dat[4]  = $_GET["dat4"];
+        $dat[5]  = $_GET["dat5"];
+        $dat[6]  = $_GET["dat6"];
+        $dat[7]  = $_GET["dat7"];
+        $dat[8]  = $_GET["dat8"];
+        $dat[9]  = $_GET["dat9"];
+    }
     
     for($ii=1;$ii<=$nsid;$ii++)
     {
 	   $sid = $msid[$ii];
-        $dd = $dat[$ii];
+       $dd  = $dat[$ii];
 	   $dbM = new DataManager   (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_ADMIN);
 	   $dbM->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS,
 							 SXN_ADMIN_STREAMS_COLUMN_SID."=".$sid); 
@@ -170,21 +167,25 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 		  {
 			 if($mid == SXN_DATA)
 			 {
+
+    
                   //echo SXN_USER, SXN_PASSWORD, \"localhost\", SXN_DATABASE_COLLECTOR)";
 		    	   $dbC = new DataCollector (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_COLLECTOR);
 				   $dbC->openDataBase();
 				   $success = $dbC->insertData($sid, $dd);
 	               echo "$sid";
+                   executeSidFunction($sid);
                    getControlMessage($sid);
 		      }
               
              if($mid == SXN_LATEST)
              {
-                 //echo("hej");
-                 getLatestValue($sid);
+                 $value = lib_getLatestValue($sid);
+                 echo("$sid $value");
              }
              if($mid == SXN_MAILBOX)
              { 
+                 executeSidFunction($sid);
                  getControlMessage($sid);
              }
 		     

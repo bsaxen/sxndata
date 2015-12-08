@@ -1,10 +1,14 @@
 <?php
 require_once('sxn_definition.php');
-define ("DEBUG_MODE", "on", true);
+define ("DEBUG_MODE", "off", true);
 //==============================================================================
 //Class DataManager
 //Author: asaxen
 //==============================================================================
+  $g_dbM1 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_ADMIN);
+  $g_dbM2 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_COLLECTOR);
+  $g_dbM3 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_CONTROL);
+
 class DataManager
 {
 	private $username_;

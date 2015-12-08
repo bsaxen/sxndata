@@ -8,13 +8,16 @@
 	<link rel="stylesheet" type="text/css" href="sxndata.css" title="Variant Duo" media="screen,projection" />
 	<title>SXN Data Admin</title>
 <?php
+require_once('sxn_sql_lib.php');
+//require_once('sxn_definition.php');
+
+require_once('sxn_lib.php');
+
 ini_set('display_errors',1);
 error_reporting(E_ALL);
 //echo("START ");
 
-require_once('sxn_sql_lib.php');
-require_once('sxn_definition.php');
-require_once('sxn_lib.php');
+
 echo("</head> ");
 $docRoot = $_SERVER['DOCUMENT_ROOT'];
 //echo("<br>$docRoot<br>");
@@ -34,17 +37,18 @@ $s_did = (isset($_GET['did']) ? $_GET['did'] : null);
 //
 //$g_users      = array();      // table SXN_users
 //$g_sids       = array();      // table SXN_streams
-//$g_data_id    = array();      // table SXN_data_types
-//$g_data_name  = array();      // table SXN_data_types
-//$g_data_unit  = array();      // table SXN_data_types
+
 //$g_heartbeat_units = array(); // no table */
 //$g_heartbeat_units[1] = 'second';
 //$g_heartbeat_units[2] = 'minute';
 //$g_heartbeat_units[3] = 'hour';
 //$g_heartbeat_units[4] = 'h24';
 //$g_heartbeat_units[5] = 'auto';
-//$g_command_type_id   = array();
-//$g_command_type_name = array();
+$g_command_type_id   = array();
+$g_command_type_name = array();
+$g_data_id    = array();      // table SXN_data_types
+$g_data_name  = array();      // table SXN_data_types
+$g_data_unit  = array();      // table SXN_data_types
 
 if($do != 'add_db')
 {
@@ -599,8 +603,7 @@ if($action == 'addSidForm')
 {
    $sid         = $_POST['f_sid'];
    $type        = $_POST['f_type'];
-   //$unit        = $_POST['f_unit'];
-   $unit        = (isset($_GET['f_unit'])? $_GET['f_unit']: null);
+   $unit        = $_POST['f_unit'];
    $title       = $_POST['f_title'];
    $tag         = $_POST['f_tag'];
    $description = $_POST['f_description'];
@@ -1226,8 +1229,9 @@ if($do == 'add_sid')
   echo(" <table border=\"1\">
           <form action=\"sxn_config.php\" method=\"post\">
               <input name=\"f_action\" type=\"hidden\" value=\"addSidForm\" />
-              <tr><td>SID</td><td><input name=\"f_sid\" type=\"text\" size=\"50\" /></td></tr> 
-              <tr><td>Data Type</td><td><select name=\"f_type\"> ");
+              <tr><td>SID</td><td><input name=\"f_sid\" type=\"text\" size=\"50\" /></td></tr>
+              <tr><td>Type</td><td><input name=\"f_type\" type=\"text\" size=\"50\" /></td></tr>
+              <tr><td>Unit</td><td><select name=\"f_unit\"> ");
               for($ii=1;$ii<=count($g_data_name);$ii++)
               {
                     echo("<option value=\"$g_data_type_map[$ii]\">$g_data_name[$ii] ($g_data_unit[$ii]) </option>");
@@ -1263,13 +1267,14 @@ if($do == 'upd_sid')
           <form action=\"sxn_config.php\" method=\"post\">
               <input name=\"f_action\" type=\"hidden\" value=\"updSidForm\" />
               <input name=\"f_id\" type=\"hidden\" value=\"$id\" />
-              <tr><td>SID</td><td><input name=\"f_sid\" type=\"text\" size=\"50\" value=\"$sid\"/></td></tr> 
-              <tr><td>Data Type</td><td><select name=\"f_type\"> ");
+              <tr><td>SID</td><td><input name=\"f_sid\" type=\"text\" size=\"50\" value=\"$sid\"/></td></tr>
+              <tr><td>Type</td><td><input name=\"f_type\" type=\"text\" size=\"50\" value=\"$type\"/></td></tr> 
+              <tr><td>Unit</td><td><select name=\"f_unit\"> ");
               $selected = '';
-              for($ii=1;$ii<=count($g_data_id);$ii++)
+              for($ii=1;$ii<=count($g_data_type_map);$ii++)
               {
                 if($dt == $g_data_name) $selected = 'SELECTED';
-                    echo("<option value=\"$g_data_id[$ii]\" $selected>$g_data_name[$ii] ($g_data_unit[$ii]) </option>");
+                    echo("<option value=\"$g_data_type_map[$ii]\" $selected>$g_data_name[$ii] ($g_data_unit[$ii]) </option>");
               }
               echo(" </select></td></tr>
               <tr><td>Title      </td><td><input name=\"f_title\"       type=\"text\" size=\"50\"  value=\"$title\"/></td></tr>
@@ -1291,6 +1296,7 @@ if($do == 'del_sid')
 
 if($do == 'list_sid')
 {
+    readDataTypes(); 
    echo("<table border=\"1\">");
      echo("<tr>");
      echo("<td>SID</td> ");

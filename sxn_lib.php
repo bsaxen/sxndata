@@ -116,7 +116,7 @@ function readDataTypes()
    while($data = $g_dbM1->retrieveResult())
    {
     $ii++;
-    //echo $data[SXN_ADMIN_DATATYPES_COLUMN_NAME]."-".$data[SXN_ADMIN_DATATYPES_COLUMN_UNIT]."<br>";
+    echo $data[SXN_ADMIN_DATATYPES_COLUMN_NAME]."-".$data[SXN_ADMIN_DATATYPES_COLUMN_UNIT]." $ii<br>";
     //$g_data_id[$ii]   = $data[SXN_ADMIN_DATATYPES_COLUMN_DATATYPEID];
     $g_data_name[$ii] = $data[SXN_ADMIN_DATATYPES_COLUMN_NAME];
     $g_data_unit[$ii] = $data[SXN_ADMIN_DATATYPES_COLUMN_UNIT];
@@ -149,6 +149,38 @@ function readCommandTypes()
   }
   else
 	echo("Commandtypes database does not exist<br>");
+}
+//======================================================================
+function lib_getLatestValue($sid) 
+//======================================================================
+{
+    global $g_dbM2;
+    $sql = "SELECT * FROM ".SXN_COLLECTOR_TABLE_DATA_PREFIX.$sid." ORDER BY ".SXN_GENERAL_COLUMN_ID." DESC  LIMIT 1";
+    $g_dbM2->selectFromQuery($sql);
+    $numRes = $g_dbM2->retrieveNumberOfResults();
+    if($numRes>0)
+    { 
+            while($data = $g_dbM2->retrieveResult())
+		    {
+               $par = SXN_COLLECTOR_DATA_COLUMN_VALUE;
+		       $value = $data[$par];
+               return($value);
+            }
+	}
+    return(9999);
+}
+//======================================================================
+function executeSidFunction($sid)
+//======================================================================
+{
+  // check if any sid function is set active in database
+    $sFunc = 'void';
+    //$sfunc = checkSidFunction($sid);
+        $sFunc = 'controlSaxenHeater';
+    //echo("ecexute $sFunc<br>");
+    if($sFunc != 'void')call_user_func(array($sFunc,'doIt'));   
+      //if($sFunc != 'void')call_user_func(array($sFunc));   
+        
 }
 ?>
     
