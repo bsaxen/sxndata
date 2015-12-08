@@ -173,7 +173,7 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 		    	   $dbC = new DataCollector (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_COLLECTOR);
 				   $dbC->openDataBase();
 				   $success = $dbC->insertData($sid, $dd);
-	               echo "$sid";
+	               echo "$sid ";
                    executeSidFunction($sid);
                    getControlMessage($sid);
 		      }

@@ -258,20 +258,20 @@ void recSerial()
   {
      digitalWrite(3, HIGH); 
      Serial.readBytes(nbbuff,nx);
-     sscanf(nbbuff,"%d %d",&mid,&sid);
-     sprintf(dr[3],"%d",nx);
+     sscanf(nbbuff,"%d",&sid);
+     //sprintf(dm[4],"%d",nx);
      if(sid == SID1) // Check if control sid correct
      {
        if(strstr(nbbuff,"NBC_DEVICE_DELAY") != NULL)
        {
           strcpy(dr[3],"DLY");
-          sscanf(nbbuff,"%d %d %s %d",&mid,&sid,command,&g_device_delay);
+          sscanf(nbbuff,"%d %s %d",&sid,command,&g_device_delay);
           sprintf(dr[1],"%d",g_device_delay);
        }
        if(strstr(nbbuff,"NBC_STEPPER_CTRL") != NULL)
        {
           strcpy(dr[3],"SCL");
-          sscanf(nbbuff,"%d %d %s %d %d %d",&mid,&sid,command,&dir,&steps,&vel);
+          sscanf(nbbuff,"%d %s %d %d %d",&sid,command,&dir,&steps,&vel);
           if(dir==1)strcpy(dr[4],"STP>");
           if(dir==2)strcpy(dr[4],"STP<");  
           NB_oledDraw();        

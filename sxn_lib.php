@@ -176,7 +176,7 @@ function executeSidFunction($sid)
   // check if any sid function is set active in database
     $sFunc = 'void';
     //$sfunc = checkSidFunction($sid);
-    if($sid == 1)$sFunc = 'controlSaxenHeater';
+    if($sid == 1)$sFunc = 'controlSaxenHeater'; // TBD read this from database
     //echo("ecexute $sFunc<br>");
     if($sFunc != 'void')call_user_func(array($sFunc,'doIt'));   
       //if($sFunc != 'void')call_user_func(array($sFunc));   
@@ -187,19 +187,15 @@ function executeSidFunction($sid)
 function insertOrder($sid,$order)
 //======================================================================
 {
-    global $g_dbM1,$g_dbM3;
+   global $g_dbM1,$g_dbM3;
    if($g_dbM1->checkIfValueExists(SXN_ADMIN_TABLE_STREAMS,SXN_ADMIN_STREAMS_COLUMN_SID,$sid) == true)
    {
-    //echo("sid=$sid<br>");
-    //echo("order=$order<br>");
     $valueArray  = array($sid,$order,'new');
     $columnArray = array(SXN_CONTROL_COMMANDS_COLUMN_SID,
                         SXN_CONTROL_COMMANDS_COLUMN_COMMAND,
                         SXN_CONTROL_COMMANDS_COLUMN_STATUS);
     if($sid) $g_dbM3->insertRow(SXN_CONTROL_TABLE_COMMANDS,$columnArray,$valueArray);
    }
-   else
-      echo("SID does not exists<br>");
 }
 ?>
     
