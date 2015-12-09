@@ -18,6 +18,40 @@ $g_command_type_id   = array();
 $g_command_type_name = array();
 
 //=======================================
+function lib_remember($memid,$item)
+//======================================= 
+{
+   $filename = $memid.'.mem';
+   if (file_exists($filename))
+   {
+      $mfile = fopen($filename, "w");
+      fwrite($mfile, $item);
+      fclose($mfile);
+   }
+    else
+     {
+      $mfile = fopen($filename, "w");
+      fwrite($mfile, $item);
+      fclose($mfile);
+      chmod($filename,0777);
+     }      
+        
+}
+//=======================================
+function lib_recall($memid)
+//======================================= 
+{
+   $data = '0';
+   $filename = $memid.'.mem';
+   if (file_exists($filename)) 
+   {
+      $mfile = fopen($filename, "r");
+      $data = fread($mfile,filesize($filename));
+      fclose($mfile);
+   }   
+   return($data);
+}
+//=======================================
 function getExtension($str)
 //======================================= 
 {
@@ -176,7 +210,7 @@ function executeSidFunction($sid)
   // check if any sid function is set active in database
     $sFunc = 'void';
     //$sfunc = checkSidFunction($sid);
-    if($sid == 1)$sFunc = 'controlSaxenHeater'; // TBD read this from database
+    if($sid == 901)$sFunc = 'controlSaxenHeater'; // TBD read this from database
     //echo("ecexute $sFunc<br>");
     if($sFunc != 'void')call_user_func(array($sFunc,'doIt'));   
       //if($sFunc != 'void')call_user_func(array($sFunc));   

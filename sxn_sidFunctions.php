@@ -22,36 +22,52 @@ class controlSaxenHeater {
     
     //$waterIn     = lib_getLatestValue($waterIn_sid);
     $waterOut    = lib_getLatestValue($waterOut_sid);
-    if($waterOut == SXN_NO_VALUE) return;
-    //$smokeTemp   = lib_getLatestValue($smokeTemp_sid);
+    //if($waterOut == SXN_NO_VALUE) return;
+    $smokeTemp   = lib_getLatestValue($smokeTemp_sid);
+    //if($smokeTemp == SXN_NO_VALUE) return;
     $outdoorTemp = lib_getLatestValue($outdoorTemp_sid);
-    if($outdoorTemp == SXN_NO_VALUE) return;
+    //if($outdoorTemp == SXN_NO_VALUE) return;
     //$indoorTemp  = lib_getLatestValue($indoorTemp_sid);
-    
-         
-    // Make a decision
-    //-------------------------------
-    // Algorithm Water_out = -Temp_outdoor + 37     This is same as Åstenäs
+           
+// Get current time and date
+    $dtz = new DateTimeZone("Europe/Stockholm"); //Your timezone
+    $now = new DateTime(date("Y-m-d H:i:s"), $dtz);
+    $snow =  $now->format("Y-m-d H:i:s");
+
+// Recall time and date for latest order
+    $prev = lib_recall($waterOut_sid); 
+    if($prev == 0)$prev = $snow;
         
-    $delta = 40 - $outdoorTemp -  $waterOut;
+    $diff = strtotime($snow) - strtotime($prev);
+    //echo("diff=$diff $snow $prev<br>");
+        
+    $delta = 35 - $outdoorTemp -  $waterOut;
     
-    //echo("Algo: $delta<br>"); 
-    if($smokeTemp_sid > 30.0) // Only control if Heater is ON
+        
+    if($diff > 1200) // 20 minutes for order to effect the temperature  
     {
-        if($delta > 2 && $indoorTemp_sid < 20.0) // Higher shunt 
+    //echo("Algo: $delta<br>"); 
+      if($smokeTemp > 25.0) // Only control if Heater is ON
+      {
+        //if($delta > 1.0 && $indoorTemp < 19.8) // Increase Heat
+        if($delta > 1.0)
         {
-            $order = "NBC_STEPPER_CTRL 1 2 10";
-            insertOrder($waterOut_sid,$order); 
+            $order = "NBC_STEPPER_CTRL 1 2 20";
+            insertOrder($waterOut_sid,$order);
+            lib_remember($waterOut_sid,$snow); 
         }  
-        if($delta < -2 && $indoorTemp_sid > 21.0) 
+        //if($delta < -1.0 && $indoorTemp > 20.2) // Decrease Heat
+        if($delta < -1.0)
         {
-            $order = "NBC_STEPPER_CTRL 2 2 10";
+            $order = "NBC_STEPPER_CTRL 2 2 20";
             insertOrder($waterOut_sid,$order); 
-        } // Lower shunt
+            lib_remember($waterOut_sid,$snow); 
+        } 
+      }
     }
          
-    }
-}
+    } // doIt
+} // Class
 
 //======================================================
 class template {

@@ -4,10 +4,10 @@
 // History
 //==================================================
 // Software Id: 11201 2015-11-21	First version
-// 2015-12-08: support sidApp controlSaxenHeater
+// 2015-12-09: support sidApp controlSaxenHeater
 //==================================================
 #define SWID 2015
-#define DEVID 1208 
+#define DEVID 1209 
 // Adjust these paramaters acording to specific application
 #define NFLOAT 2  // No of decimals i float value
 #define SIDN  4   // No of SIDs
@@ -266,14 +266,16 @@ void recSerial()
        {
           strcpy(dr[3],"DLY");
           sscanf(nbbuff,"%d %s %d",&sid,command,&g_device_delay);
-          sprintf(dr[1],"%d",g_device_delay);
+          sprintf(dr[3],"%d",g_device_delay);
        }
        if(strstr(nbbuff,"NBC_STEPPER_CTRL") != NULL)
        {
           strcpy(dr[3],"SCL");
           sscanf(nbbuff,"%d %s %d %d %d",&sid,command,&dir,&steps,&vel);
           if(dir==1)strcpy(dr[4],"STP>");
-          if(dir==2)strcpy(dr[4],"STP<");  
+          if(dir==2)strcpy(dr[4],"STP<"); 
+          if(dir==1)strcpy(dr[1],"hi");
+          if(dir==2)strcpy(dr[1],"low<");   
           NB_oledDraw();        
           steps = steps*10;
           if(steps > 0 || steps < 1000)
@@ -365,7 +367,7 @@ void setup()
   g_sids[7] = SID7;
   g_sids[8] = SID8;
 
-  sprintf(dr[1],"%d",SWID);
+  //sprintf(dr[1],"%d",SWID);
   sprintf(dr[2],"%d",DEVID);
   sprintf(dr[3],"%d",g_device_delay);
   for(i=1;i<=SIDN;i++)
@@ -391,10 +393,14 @@ void loop()
       str = String(tempC);
       str.toCharArray(dl[i],8); 
       if(tempC != -127)SXN_sendToGwy(NABTON_DATA,g_sids[i],tempC,0);
-      delay(g_device_delay*1000);  
-      recSerial(); 
+
+      strcpy(dm[i],"*"); 
+      NB_oledDraw();
+      delay(2000);  
+      recSerial();
+      sprintf(dm[i],"%d",g_sids[i]);
       NB_oledDraw();
     }
- 
+    delay(g_device_delay*1000);   
 }
 
