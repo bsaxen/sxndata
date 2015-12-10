@@ -18,21 +18,41 @@ $g_command_type_id   = array();
 $g_command_type_name = array();
 
 //=======================================
+function lib_log($logname,$item)
+//======================================= 
+{
+   $filename = $logname.'.log';
+   if (file_exists($filename))
+   {
+      $fh = fopen($filename, "a");
+      fwrite($fh, $item);
+      fclose($fh);
+   }
+    else
+     {
+      $fh = fopen($filename, "w");
+      fwrite($fh, $item);
+      fclose($fh);
+      chmod($filename,0777);
+     }      
+        
+}
+//=======================================
 function lib_remember($memid,$item)
 //======================================= 
 {
    $filename = $memid.'.mem';
    if (file_exists($filename))
    {
-      $mfile = fopen($filename, "w");
-      fwrite($mfile, $item);
-      fclose($mfile);
+      $fh = fopen($filename, "w");
+      fwrite($fh, $item);
+      fclose($fh);
    }
     else
      {
-      $mfile = fopen($filename, "w");
-      fwrite($mfile, $item);
-      fclose($mfile);
+      $fh = fopen($filename, "w");
+      fwrite($fh, $item);
+      fclose($fh);
       chmod($filename,0777);
      }      
         
@@ -41,13 +61,13 @@ function lib_remember($memid,$item)
 function lib_recall($memid)
 //======================================= 
 {
-   $data = '0';
+   $data = 'void';
    $filename = $memid.'.mem';
    if (file_exists($filename)) 
    {
-      $mfile = fopen($filename, "r");
-      $data = fread($mfile,filesize($filename));
-      fclose($mfile);
+      $fh = fopen($filename, "r");
+      $data = fread($fh,filesize($filename));
+      fclose($fh);
    }   
    return($data);
 }

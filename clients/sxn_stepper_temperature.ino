@@ -277,7 +277,7 @@ void recSerial()
           if(dir==1)strcpy(dr[1],"hi");
           if(dir==2)strcpy(dr[1],"low<");   
           NB_oledDraw();        
-          steps = steps*10;
+          //steps = steps*10;
           if(steps > 0 || steps < 1000)
           {
              if(dir == 1) stepCW(steps,vel);

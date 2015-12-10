@@ -57,7 +57,7 @@ def pulseEvent(x):
 		p1 = time.time()
 		conn = httplib.HTTPConnection(nb_server)
 		#t_req = "/nabton/NDSServer/NDSCollector.php?mid=1&sid=%d&data=%.2f" % (sid,elpow)
-		t_req = "/sxndata/index.php?mid=1&swid=%d&devid=%d&nsid=1&sid1=%d&data=%.2f" % (swid,devid,sid,elpow)
+		t_req = "/sxndata/index.php?mid=1&swid=%d&devid=%d&nsid=1&sid1=%d&dat1=%.2f" % (swid,devid,sid,elpow)
 		try:
 			conn.request("GET", t_req)
 			try:
