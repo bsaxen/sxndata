@@ -75,27 +75,27 @@ $yLabel = 'kWh';
 if($s_sid)
 {
     $stemp = SXN_COLLECTOR_TABLE_DATA_PREFIX.$s_sid; 
-    
     //echo("WHERE ts BETWEEN '$tStart 00:00:00' AND '$tEnd 23:59:59'");
-    $g_dbM2->selectAllFromTable($stemp, "ts BETWEEN '$startDate 00:00:00' AND '$endDate 23:59:59'");
+    $cond = "ts BETWEEN '$startDate 00:00:00' AND '$endDate 23:59:59'";
+    $g_dbM2->selectAllFromTable($stemp, $cond);
     $numRes = $g_dbM2->retrieveNumberOfResults();
     echo("Number of data for SID $s_sid: $numRes<br>");
     
-    $g_dbM2->selectMaxValue($stemp,SXN_COLLECTOR_DATA_COLUMN_VALUE);
+    $g_dbM2->selectMaxValue($stemp,SXN_COLLECTOR_DATA_COLUMN_VALUE,$cond);
 	$numRes = $g_dbM2->retrieveNumberOfResults();
 	if($numRes>0)
 	{
 		$data = $g_dbM2->retrieveResult();
-        $ymax = $data[0];
-        //echo("max=$data[0]<br>");
+        $ymax = $data[0]*1.05;
+        echo("max=$data[0]<br>");
 	}
-    $g_dbM2->selectMinValue($stemp,SXN_COLLECTOR_DATA_COLUMN_VALUE);
+    $g_dbM2->selectMinValue($stemp,SXN_COLLECTOR_DATA_COLUMN_VALUE,$cond);
 	$numRes = $g_dbM2->retrieveNumberOfResults();
 	if($numRes>0)
 	{
 		$data = $g_dbM2->retrieveResult();
-        $ymin = $data[0];
-        //echo("max=$data[0]<br>");
+        $ymin = $data[0]*0.95;
+        echo("min=$data[0]<br>");
 	}
     
 //    $g_dbM2->selectMaxValue($stemp,SXN_GENERAL_COLUMN_TIMESTAMP);

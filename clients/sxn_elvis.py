@@ -1,6 +1,6 @@
 #==================================================
 # RPI_elvis.py
-# 2015-11-21 
+# 2015-12-11 
 #==================================================
 # SWID platform,application,version
 # platform: 1=arduino(RPi), 2=raspberryPi(arduino), 3=raspberryPi(standalone), 4=arduino(standalone), 5=android

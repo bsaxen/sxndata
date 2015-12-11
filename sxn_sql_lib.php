@@ -258,11 +258,18 @@ class DataManager
 	* Desc: Gets max value from of table
 	* Return: none
 	*/
-	public function selectMaxValue($table,$column)
+	public function selectMaxValue($table,$column, $conditions)
 	{
 		if ($this->isDbOpen_)
 		{
-            $this->result_ = $this->mysqli_->query("SELECT MAX($column) FROM $table");	
+            if($conditions == '')
+            {
+				$this->result_ = $this->mysqli_->query("SELECT MAX($column) FROM $table");
+            }
+            else
+            {
+                $this->result_ = $this->mysqli_->query("SELECT MAX($column) FROM $table WHERE $conditions");
+            }	 	
 		}
 	}
 
@@ -271,11 +278,18 @@ class DataManager
 	* Desc: Gets min value from of table
 	* Return: none
 	*/
-	public function selectMinValue($table,$column)
+	public function selectMinValue($table,$column, $conditions)
 	{
 		if ($this->isDbOpen_)
 		{
-            $this->result_ = $this->mysqli_->query("SELECT MIN($column) FROM $table");	
+            if($conditions == '')
+            {
+				$this->result_ = $this->mysqli_->query("SELECT MIN($column) FROM $table");
+            }
+            else
+            {
+                $this->result_ = $this->mysqli_->query("SELECT MIN($column) FROM $table WHERE $conditions");
+            }	 	
 		}
 	}    
     
