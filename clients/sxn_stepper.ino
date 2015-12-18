@@ -4,6 +4,7 @@
 // History
 //==================================================
 // Software Id: 11201 2015-12-11	First version
+// 2015-12-18: increased stepper resolution, corrected NB_sendToGateway
 //==================================================
 #define SWID 2015
 #define DEVID 1209 
@@ -18,7 +19,7 @@
 #define SID6 906
 #define SID7 907
 #define SID8 908
-
+int g_debug = 0;
 // Fixed part of configuration
 
 // Arduino states
@@ -167,62 +168,58 @@ void NB_serialFlush()
 void NB_sendToGwy(int mid, int sid, float data, int other)
 //=================================================
 {
-  int ixSid = 0,i;
+  int ixSid = 0,i,negative=0;
   char msg1[100],msg2[50],checksum[20];
      strcpy(msg1," ");
      strcpy(msg2," ");
      digitalWrite(5,HIGH);
-     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,nsensors,sid);
+     // Mandatory part of message
+     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,1,sid);
+if(g_debug==1){Serial.print("data:");Serial.println(data);}      
      if(mid == NABTON_DATA)
      {
-       int part1 = int(data);
+       negative = 0;
+       if(data < 0.0)
+       {
+          negative = 1;
+          data = data*(-1.0);
+       }
+       // Get non-decimal part
+       int part1 = floor(data);
+if(g_debug==1){Serial.print("part1:");Serial.println(part1);}       
+       // Get decimalpart
        float ftemp = (data - part1);
        for(i=1;i<=NFLOAT;i++)ftemp=ftemp*10;
-       int part2 = ftemp; 
-       if(part2 < 0)part2 = part2*(-1.0);
-       if(part2 < 10)
-         sprintf(msg2,"&devid=%d&swid=%d&data=%d.0%d",DEVID,SWID,part1,part2);
-       else 
-         sprintf(msg2,"&devid=%d&swid=%d&data=%d.%d",DEVID,SWID,part1,part2);
-       if(part2 < 0)part2 = part2*(-1.0);
+if(g_debug==1){Serial.print("ftemp:");Serial.println(ftemp);}   
+       int part2 = round(ftemp);
+if(g_debug==1){Serial.print("part2:");Serial.println(part2);}          
+       // if negative
+       if(negative == 0)
+       {
+         if(part2 < 10)
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
+         else 
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
+       }
+       if(negative == 1)
+       {
+         if(part2 < 10)
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=-%d.0%d",DEVID,SWID,part1,part2);
+         else 
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=-%d.%d",DEVID,SWID,part1,part2);
+       }
        strcat(msg1,msg2);
      }
+    
+     // Create checksum
      sprintf(checksum,": %d",strlen(msg1));
      strcat(msg1,checksum);
-
+     
+     // Send meassage
      Serial.println(msg1);
      digitalWrite(5,LOW);
 }
-//=================================================
-void SXN_sendToGwy(int mid, int sid, float data, int other)
-//=================================================
-{
-  int ixSid = 0,i;
-  char msg1[100],msg2[50],checksum[20];
-     strcpy(msg1," ");
-     strcpy(msg2," ");
-     digitalWrite(5,HIGH);
-     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,nsensors,sid);
-     if(mid == NABTON_DATA)
-     {
-       int part1 = int(data);
-       float ftemp = (data - part1);
-       for(i=1;i<=NFLOAT;i++)ftemp=ftemp*10;
-       int part2 = ftemp; 
-       if(part2 < 0)part2 = part2*(-1.0);
-       if(part2 < 10)
-         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
-       else 
-         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
-       if(part2 < 0)part2 = part2*(-1.0);
-       strcat(msg1,msg2);
-     }
-     sprintf(checksum,": %d",strlen(msg1));
-     strcat(msg1,checksum);
 
-     Serial.println(msg1);
-     digitalWrite(5,LOW);
-}
 //=================================================
 void recSerial()
 //=================================================
@@ -344,7 +341,7 @@ void setup()
 void loop()
 //=================================================
 {
-      SXN_sendToGwy(NABTON_DATA,g_sids[1],0.0,0);
+      NB_sendToGwy(NABTON_DATA,g_sids[1],0.0,0);
       strcpy(dm[1],"*"); 
       NB_oledDraw();
       delay(2000);  

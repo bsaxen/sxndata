@@ -115,7 +115,27 @@ function getControlMessage($sid) {
 						.SXN_CONTROL_COMMANDS_COLUMN_STATUS."="."'new'");
 	}
 }
-
+//=======================================
+function setClientStatus($name,$ip)
+//======================================= 
+{
+   $filename = $name.'.ip';
+   $now = date("Y-m-d H:i:s"); 
+   $cont = $ip.' '.$now;
+   if (file_exists($filename))
+   {
+      $fh = fopen($filename, "w");
+      fwrite($fh, $cont);
+      fclose($fh);
+   }
+    else
+     {
+      $fh = fopen($filename, "w");
+      fwrite($fh, $cont);
+      fclose($fh);
+      chmod($filename,0777);
+     }              
+}
 //==============================================================================
 // Main program
 //==============================================================================
@@ -124,20 +144,24 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 {
 
 	//Data from request
-	$mid  = $_GET["mid"];
+	$mid   = $_GET["mid"];
     $nsid  = $_GET["nsid"];
-
-                   if($nsid > 9 || $nsid < 1) die;
+    $name  = $_GET["name"];
+    $ip    = $_GET["ip"];
     
-                   if($nsid > 0) {$msid[1]  = $_GET["sid1"];}
-                   if($nsid > 1) {$msid[2]  = $_GET["sid2"];}
-                   if($nsid > 2) {$msid[3]  = $_GET["sid3"];}
-                   if($nsid > 3) {$msid[4]  = $_GET["sid4"];}
-                   if($nsid > 4) {$msid[5]  = $_GET["sid5"];}
-                   if($nsid > 5) {$msid[6]  = $_GET["sid6"];}
-                   if($nsid > 6) {$msid[7]  = $_GET["sid7"];}
-                   if($nsid > 7) {$msid[8]  = $_GET["sid8"];}
-                   if($nsid > 8) {$msid[9]  = $_GET["sid9"];}
+   setClientStatus($name,$ip);
+
+   if($nsid > 9 || $nsid < 1) die;
+
+   if($nsid > 0) {$msid[1]  = $_GET["sid1"];}
+   if($nsid > 1) {$msid[2]  = $_GET["sid2"];}
+   if($nsid > 2) {$msid[3]  = $_GET["sid3"];}
+   if($nsid > 3) {$msid[4]  = $_GET["sid4"];}
+   if($nsid > 4) {$msid[5]  = $_GET["sid5"];}
+   if($nsid > 5) {$msid[6]  = $_GET["sid6"];}
+   if($nsid > 6) {$msid[7]  = $_GET["sid7"];}
+   if($nsid > 7) {$msid[8]  = $_GET["sid8"];}
+   if($nsid > 8) {$msid[9]  = $_GET["sid9"];}
     
     if($mid == SXN_DATA)
     {
@@ -167,8 +191,6 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 		  {
 			 if($mid == SXN_DATA)
 			 {
-
-    
                   //echo SXN_USER, SXN_PASSWORD, \"localhost\", SXN_DATABASE_COLLECTOR)";
 		    	   $dbC = new DataCollector (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_COLLECTOR);
 				   $dbC->openDataBase();

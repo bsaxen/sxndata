@@ -18,6 +18,39 @@ $g_command_type_id   = array();
 $g_command_type_name = array();
 
 //=======================================
+function lib_listFileContent($filename)
+//======================================= 
+{
+    $handle = fopen($filename, "r");
+    if ($handle) 
+    { 
+        echo("$filename ");
+        while (($line = fgets($handle)) !== false) 
+        {
+          echo("$line<br>");
+        }
+        fclose($handle);
+    } 
+    else
+        echo("Error lib_listFileContent($filename)");
+}
+//=======================================
+function lib_listIpFiles($filename)
+//======================================= 
+{
+    $handle = fopen($filename, "r");
+    if ($handle) 
+    {    
+        while (($line = fgets($handle)) !== false) 
+        {
+          $line = trim($line);
+          //echo("file=$line<br>");
+          lib_listFileContent($line);
+        }
+        fclose($handle);
+    } 
+}
+//=======================================
 function lib_log($logname,$item)
 //======================================= 
 {
@@ -34,8 +67,7 @@ function lib_log($logname,$item)
       fwrite($fh, $item);
       fclose($fh);
       chmod($filename,0777);
-     }      
-        
+     }             
 }
 //=======================================
 function lib_remember($memid,$item)
@@ -54,8 +86,7 @@ function lib_remember($memid,$item)
       fwrite($fh, $item);
       fclose($fh);
       chmod($filename,0777);
-     }      
-        
+     }              
 }
 //=======================================
 function lib_recall($memid)

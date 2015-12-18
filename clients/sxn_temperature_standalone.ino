@@ -4,6 +4,7 @@
 // History
 //==================================================
 // Software Id: 41001 2015-11-21	First version
+// 2015-12-18: increased stepper resolution, corrected NB_sendToGateway
 //==================================================
 // SWID platform,application,version
 // platform: 1=arduino(RPi), 2=raspberryPi(arduino), 3=raspberryPi(standalone), 4=arduino(standalone), 5=android
@@ -20,6 +21,7 @@
 #define SID6 906
 #define SID7 907
 #define SID8 908
+int g_debug = 0;
 //==================================================
 #define MAX_SID 8
 //#define MAX_ORDERS 100
@@ -144,47 +146,62 @@ void NB_serialFlush()
   }
   //Serial.println(":flushed"); 
 }   
+
 //=================================================
 void NB_sendToGwy(int mid, int sid, float data, int other)
 //=================================================
 {
-     digitalWrite(LED_INTERNET,LOW);
-     int ixSid = 0,i;
-     char msg1[100],msg2[50],checksum[20];
+  int ixSid = 0,i,negative=0;
+  char msg1[100],msg2[50],checksum[20];
      strcpy(msg1," ");
      strcpy(msg2," ");
      digitalWrite(5,HIGH);
-     sprintf(msg1,"GET /sxndata/index.php?mid=%d&nsid=%d&sid1=%d",mid,nsensors,sid);
+     // Mandatory part of message
+     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,1,sid);
+if(g_debug==1){Serial.print("data:");Serial.println(data);}      
      if(mid == NABTON_DATA)
      {
-       int part1 = int(data);
+       negative = 0;
+       if(data < 0.0)
+       {
+          negative = 1;
+          data = data*(-1.0);
+       }
+       // Get non-decimal part
+       int part1 = floor(data);
+if(g_debug==1){Serial.print("part1:");Serial.println(part1);}       
+       // Get decimalpart
        float ftemp = (data - part1);
        for(i=1;i<=NFLOAT;i++)ftemp=ftemp*10;
-       int part2 = ftemp; 
-       if(part2 < 0)part2 = part2*(-1.0);
-       if(part2 < 10)
-         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
-       else 
-         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
+if(g_debug==1){Serial.print("ftemp:");Serial.println(ftemp);}   
+       int part2 = round(ftemp);
+if(g_debug==1){Serial.print("part2:");Serial.println(part2);}          
+       // if negative
+       if(negative == 0)
+       {
+         if(part2 < 10)
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
+         else 
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
+       }
+       if(negative == 1)
+       {
+         if(part2 < 10)
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=-%d.0%d",DEVID,SWID,part1,part2);
+         else 
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=-%d.%d",DEVID,SWID,part1,part2);
+       }
        strcat(msg1,msg2);
      }
-     //sprintf(checksum,": %d",strlen(msg1));
-     //strcat(msg1,checksum);
-     client.stop();
-
-     if(client.connect(server, 80))
-     {
-       digitalWrite(LED_INTERNET,HIGH);
-       Serial.println(msg1);
-       client.println(msg1);
-       //client.println("Host: 127.0.0.1");
-       //client.println("Connection: close");
-       client.println();
-     }
- 
+    
+     // Create checksum
+     sprintf(checksum,": %d",strlen(msg1));
+     strcat(msg1,checksum);
+     
+     // Send meassage
+     Serial.println(msg1);
      digitalWrite(5,LOW);
 }
-
 //=================================================
 void clearOled()
 //================================================= 

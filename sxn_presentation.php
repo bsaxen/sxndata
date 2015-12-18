@@ -460,7 +460,9 @@ function zoomed() {
      echo("</tr>");
    }
    echo("</table>");
-
+   system("ls *.ip > ipList.work");
+   lib_listIpFiles("ipList.work");
+   
 ?>
 
 	</body>

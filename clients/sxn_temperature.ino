@@ -5,14 +5,15 @@
 //==================================================
 // 2015-11-21	First version
 // 2015-12-15   Improved sending to RPi
+// 2015-12-18: increased stepper resolution, corrected NB_sendToGateway
 //==================================================
 // SWID application,version
 //==================================================
 #define SWID 11001
 #define DEVID 9999
 #define NFLOAT 2  // No of decimals i float value
-#define SIDN 4    // No of SIDs
-#define SID1 901  
+#define SIDN 1    // No of SIDs
+#define SID1 6  
 #define SID2 902  
 #define SID3 903  
 #define SID4 904  
@@ -20,11 +21,12 @@
 #define SID6 906
 #define SID7 907
 #define SID8 908
+int g_debug = 0;
 //==================================================
 #define MAX_SID 10
 #define MAX_ORDERS 100
 int g_sids[10] = {SIDN,SID1,SID2,SID3,SID4,SID5,SID6,SID7,SID8};
-int g_device_delay = 10;
+int g_device_delay = 20;
 // Arduino-RPi protocol
 #define NABTON_DATA     1 
 //=================================================
@@ -100,13 +102,6 @@ void draw()
   //u8g.setFont(u8g_font_6x10);
   u8g.setFont(u8g_font_unifont);
   //u8g.setFont(u8g_font_osb21);
-  /*u8g.drawStr( 0, 1, ".....");
-  u8g.drawStr( 45, 1, ".....");
-  u8g.drawStr( 90, 1, ".....");
-  
-  u8g.drawStr( 0, 63, "_____");
-  u8g.drawStr( 45,63, "_____");
-  u8g.drawStr( 90,63, "_____");*/
   
   u8g.drawStr( 0, 10, dl[1]);
   u8g.drawStr( 0, 27, dl[2]);
@@ -136,29 +131,54 @@ void NB_serialFlush()
 void NB_sendToGwy(int mid, int sid, float data, int other)
 //=================================================
 {
-  int ixSid = 0,i;
+  int ixSid = 0,i,negative=0;
   char msg1[100],msg2[50],checksum[20];
      strcpy(msg1," ");
      strcpy(msg2," ");
      digitalWrite(5,HIGH);
+     // Mandatory part of message
      sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,1,sid);
+if(g_debug==1){Serial.print("data:");Serial.println(data);}      
      if(mid == NABTON_DATA)
      {
-       int part1 = int(data);
+       negative = 0;
+       if(data < 0.0)
+       {
+          negative = 1;
+          data = data*(-1.0);
+       }
+       // Get non-decimal part
+       int part1 = floor(data);
+if(g_debug==1){Serial.print("part1:");Serial.println(part1);}       
+       // Get decimalpart
        float ftemp = (data - part1);
        for(i=1;i<=NFLOAT;i++)ftemp=ftemp*10;
-       int part2 = ftemp; 
-       if(part2 < 0)part2 = part2*(-1.0);
-       if(part2 < 10)
-         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
-       else 
-         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
-       if(part2 < 0)part2 = part2*(-1.0);
+if(g_debug==1){Serial.print("ftemp:");Serial.println(ftemp);}   
+       int part2 = round(ftemp);
+if(g_debug==1){Serial.print("part2:");Serial.println(part2);}          
+       // if negative
+       if(negative == 0)
+       {
+         if(part2 < 10)
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
+         else 
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
+       }
+       if(negative == 1)
+       {
+         if(part2 < 10)
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=-%d.0%d",DEVID,SWID,part1,part2);
+         else 
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=-%d.%d",DEVID,SWID,part1,part2);
+       }
        strcat(msg1,msg2);
      }
+    
+     // Create checksum
      sprintf(checksum,": %d",strlen(msg1));
      strcat(msg1,checksum);
-
+     
+     // Send meassage
      Serial.println(msg1);
      digitalWrite(5,LOW);
 }

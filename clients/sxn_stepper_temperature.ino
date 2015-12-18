@@ -5,11 +5,10 @@
 //==================================================
 // Software Id: 11201 2015-11-21	First version
 // 2015-12-09: support sidApp controlSaxenHeater
+// 2015-12-18: increased stepper resolution, corrected NB_sendToGateway
 //==================================================
 #define SWID 2015
-#define DEVID 1209 
-// Adjust these paramaters acording to specific application
-#define NFLOAT 2  // No of decimals i float value
+#define DEVID 1218 
 #define SIDN  4   // No of SIDs
 #define SID1 1  
 #define SID2 2  
@@ -19,14 +18,16 @@
 #define SID6 906
 #define SID7 907
 #define SID8 908
-
-// Fixed part of configuration
-
+int g_device_delay = 20;
+int g_debug = 0;
+//==================================================
+// This code supports 2 decimals only
+#define NFLOAT 2  // No of decimals i float value
 // Arduino states
 #define MAX_SID 10
 #define MAX_ORDERS 100
 int g_sids[10] = {SIDN,SID1,SID2,SID3,SID4,SID5,SID6,SID7,SID8};
-int g_device_delay = 20;
+
 
 // Arduino-RPi protocol
 #define NABTON_DATA     1 
@@ -151,13 +152,6 @@ void draw()
   //u8g.setFont(u8g_font_6x10);
   u8g.setFont(u8g_font_unifont);
   //u8g.setFont(u8g_font_osb21);
-  /*u8g.drawStr( 0, 1, ".....");
-  u8g.drawStr( 45, 1, ".....");
-  u8g.drawStr( 90, 1, ".....");
-  
-  u8g.drawStr( 0, 63, "_____");
-  u8g.drawStr( 45,63, "_____");
-  u8g.drawStr( 90,63, "_____");*/
   
   u8g.drawStr( 0, 10, dl[1]);
   u8g.drawStr( 0, 27, dl[2]);
@@ -188,59 +182,54 @@ void NB_serialFlush()
 void NB_sendToGwy(int mid, int sid, float data, int other)
 //=================================================
 {
-  int ixSid = 0,i;
+  int ixSid = 0,i,negative=0;
   char msg1[100],msg2[50],checksum[20];
      strcpy(msg1," ");
      strcpy(msg2," ");
      digitalWrite(5,HIGH);
+     // Mandatory part of message
      sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,1,sid);
+if(g_debug==1){Serial.print("data:");Serial.println(data);}      
      if(mid == NABTON_DATA)
      {
-       int part1 = int(data);
+       negative = 0;
+       if(data < 0.0)
+       {
+          negative = 1;
+          data = data*(-1.0);
+       }
+       // Get non-decimal part
+       int part1 = floor(data);
+if(g_debug==1){Serial.print("part1:");Serial.println(part1);}       
+       // Get decimalpart
        float ftemp = (data - part1);
        for(i=1;i<=NFLOAT;i++)ftemp=ftemp*10;
-       int part2 = ftemp; 
-       if(part2 < 0)part2 = part2*(-1.0);
-       if(part2 < 10)
-         sprintf(msg2,"&devid=%d&swid=%d&data=%d.0%d",DEVID,SWID,part1,part2);
-       else 
-         sprintf(msg2,"&devid=%d&swid=%d&data=%d.%d",DEVID,SWID,part1,part2);
-       if(part2 < 0)part2 = part2*(-1.0);
+if(g_debug==1){Serial.print("ftemp:");Serial.println(ftemp);}   
+       int part2 = round(ftemp);
+if(g_debug==1){Serial.print("part2:");Serial.println(part2);}          
+       // if negative
+       if(negative == 0)
+       {
+         if(part2 < 10)
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
+         else 
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
+       }
+       if(negative == 1)
+       {
+         if(part2 < 10)
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=-%d.0%d",DEVID,SWID,part1,part2);
+         else 
+           sprintf(msg2,"&devid=%d&swid=%d&dat1=-%d.%d",DEVID,SWID,part1,part2);
+       }
        strcat(msg1,msg2);
      }
+    
+     // Create checksum
      sprintf(checksum,": %d",strlen(msg1));
      strcat(msg1,checksum);
-
-     Serial.println(msg1);
-     digitalWrite(5,LOW);
-}
-//=================================================
-void SXN_sendToGwy(int mid, int sid, float data, int other)
-//=================================================
-{
-  int ixSid = 0,i;
-  char msg1[100],msg2[50],checksum[20];
-     strcpy(msg1," ");
-     strcpy(msg2," ");
-     digitalWrite(5,HIGH);
-     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,1,sid);
-     if(mid == NABTON_DATA)
-     {
-       int part1 = int(data);
-       float ftemp = (data - part1);
-       for(i=1;i<=NFLOAT;i++)ftemp=ftemp*10;
-       int part2 = ftemp; 
-       if(part2 < 0)part2 = part2*(-1.0);
-       if(part2 < 10)
-         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
-       else 
-         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
-       if(part2 < 0)part2 = part2*(-1.0);
-       strcat(msg1,msg2);
-     }
-     sprintf(checksum,": %d",strlen(msg1));
-     strcat(msg1,checksum);
-
+     
+     // Send meassage
      Serial.println(msg1);
      digitalWrite(5,LOW);
 }
@@ -259,7 +248,6 @@ void recSerial()
      digitalWrite(3, HIGH); 
      Serial.readBytes(nbbuff,nx);
      sscanf(nbbuff,"%d",&sid);
-     //sprintf(dm[4],"%d",nx);
      if(sid == SID1) // Check if control sid correct
      {
        if(strstr(nbbuff,"NBC_DEVICE_DELAY") != NULL)
@@ -277,7 +265,6 @@ void recSerial()
           if(dir==1)strcpy(dr[1],"hi");
           if(dir==2)strcpy(dr[1],"low<");   
           NB_oledDraw();        
-          //steps = steps*10;
           if(steps > 0 || steps < 1000)
           {
              if(dir == 1) stepCW(steps,vel);
@@ -298,9 +285,9 @@ void clearOled()
   int i;
   for(i=1;i<=4;i++)
   {
-    strcpy(dl[i],"-");
-    strcpy(dm[i],"-");
-    strcpy(dr[i],"-");
+    strcpy(dl[i]," ");
+    strcpy(dm[i]," ");
+    strcpy(dr[i]," ");
   }
 }
 
@@ -389,18 +376,18 @@ void loop()
     sensors.requestTemperatures();
     for(i=1;i<=nsensors;i++)
     {
-      tempC = sensors.getTempC(device[i-1]);    
+      strcpy(dl[i]," ");  
+      tempC = sensors.getTempC(device[i-1]);     
       str = String(tempC);
       str.toCharArray(dl[i],8); 
-      if(tempC != -127)SXN_sendToGwy(NABTON_DATA,g_sids[i],tempC,0);
-
-      strcpy(dm[i],"*"); 
+      if(tempC != -127)NB_sendToGwy(NABTON_DATA,g_sids[i],tempC,0);
+      strcpy(dm[i],"*");
       NB_oledDraw();
       delay(2000);  
       recSerial();
       sprintf(dm[i],"%d",g_sids[i]);
       NB_oledDraw();
     }
-    delay(g_device_delay*1000);   
+    delay(g_device_delay*1000); // delay in steps of seconds   
 }
-
+// End of file
