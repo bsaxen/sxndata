@@ -193,7 +193,7 @@ void NB_sendToGwy(int mid, int sid, float data, int other)
      strcpy(msg1," ");
      strcpy(msg2," ");
      digitalWrite(5,HIGH);
-     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,nsensors,sid);
+     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,1,sid);
      if(mid == NABTON_DATA)
      {
        int part1 = int(data);
@@ -223,7 +223,7 @@ void SXN_sendToGwy(int mid, int sid, float data, int other)
      strcpy(msg1," ");
      strcpy(msg2," ");
      digitalWrite(5,HIGH);
-     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,nsensors,sid);
+     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,1,sid);
      if(mid == NABTON_DATA)
      {
        int part1 = int(data);

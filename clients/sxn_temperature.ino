@@ -3,14 +3,15 @@
 //==================================================
 // History
 //==================================================
-// Software Id: 11001 2015-11-21	First version
+// 2015-11-21	First version
+// 2015-12-15   Improved sending to RPi
 //==================================================
 // SWID application,version
 //==================================================
 #define SWID 11001
 #define DEVID 9999
 #define NFLOAT 2  // No of decimals i float value
-#define SIDN 1    // No of SIDs
+#define SIDN 4    // No of SIDs
 #define SID1 901  
 #define SID2 902  
 #define SID3 903  
@@ -140,7 +141,7 @@ void NB_sendToGwy(int mid, int sid, float data, int other)
      strcpy(msg1," ");
      strcpy(msg2," ");
      digitalWrite(5,HIGH);
-     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,nsensors,sid);
+     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,1,sid);
      if(mid == NABTON_DATA)
      {
        int part1 = int(data);
@@ -149,9 +150,9 @@ void NB_sendToGwy(int mid, int sid, float data, int other)
        int part2 = ftemp; 
        if(part2 < 0)part2 = part2*(-1.0);
        if(part2 < 10)
-         sprintf(msg2,"&devid=%d&swid=%d&data=%d.0%d",DEVID,SWID,part1,part2);
+         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
        else 
-         sprintf(msg2,"&devid=%d&swid=%d&data=%d.%d",DEVID,SWID,part1,part2);
+         sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
        if(part2 < 0)part2 = part2*(-1.0);
        strcat(msg1,msg2);
      }
@@ -179,7 +180,7 @@ void recSerial()
      sprintf(dr[3],"%d",nx);
      if(sid == SID1) // Check if control sid correct
      {
-       if(strstr(nbbuff,"NB_DEVICE_DELAY") != NULL)
+       if(strstr(nbbuff,"NBC_DEVICE_DELAY") != NULL)
        {
           strcpy(dr[3],"DLY");
           sscanf(nbbuff,"%d %d %s %d",&mid,&sid,command,&g_device_delay);
@@ -251,7 +252,7 @@ void setup()
   {
       tempC = sensors.getTempC(device[i-1]);    
       str = String(tempC);
-      str.toCharArray(dl[i+1],8); 
+      str.toCharArray(dl[i],8); 
   }
   g_sids[1] = SID1;
   g_sids[2] = SID2;
@@ -262,17 +263,16 @@ void setup()
   g_sids[7] = SID7;
   g_sids[8] = SID8;
   
-  sprintf(dl[1],"%d",SWID);
-  sprintf(dm[1],"%d",DEVID);
+  //sprintf(dl[1],"%d",SWID);
+  //sprintf(dm[1],"%d",DEVID);
   sprintf(dr[1],"%d",g_device_delay);
   for(i=1;i<=SIDN;i++)
   {
-    sprintf(dr[i+1],"%d",g_sids[i]);
+    sprintf(dm[i],"%d",g_sids[i]);
   }
   NB_oledDraw();
 
 }
-
 //=================================================
 void loop()
 //=================================================
@@ -286,11 +286,16 @@ void loop()
     {
       tempC = sensors.getTempC(device[i-1]);    
       str = String(tempC);
-      str.toCharArray(dl[i+1],8); 
+      str.toCharArray(dl[i],8); 
       if(tempC != -127)NB_sendToGwy(NABTON_DATA,g_sids[i],tempC,0);
-      delay(g_device_delay*1000);  
-      recSerial(); 
+
+      strcpy(dm[i],"*"); 
+      NB_oledDraw();
+      delay(2000);  
+      recSerial();
+      sprintf(dm[i],"%d",g_sids[i]);
       NB_oledDraw();
     }
+    delay(g_device_delay*1000);   
 }
 

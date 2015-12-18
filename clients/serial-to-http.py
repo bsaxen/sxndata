@@ -8,7 +8,12 @@
 #==================================================
 # History
 #==================================================
-
+# SXN_SERVER 78.67.160.17
+# XX_PATH    /nabton/nabtonCollector/NDSCollector.php
+# SXN_PATH   /sxndata/index.php
+# SXN_DEVICE /dev/ttyACM1
+# SXN_DEBUG  YES
+# END_OF_FILE
 #==================================================
 #swid = N/A
 #devid = N/A
@@ -19,28 +24,34 @@ import httplib
 #============================================
 # Read configuration
 #============================================
-print 'Version 2015-11-21'
-file = open('serial-to-http.cfg','r')
-nb=0
-sxn_debug = 'YES';
-for line in file:
-    words=line.split()
-    print words
-    if words[0] == 'SXN_DEBUG':
-        sxn_debug = words[1]
-        print '-_- Debug Mode On ' + sxn_debug
-    if words[0] == 'SXN_SERVER':
-        sxn_server = words[1]
-        nb=nb+1
-        print '-_- SXN Server is defined: ' + sxn_server
-    if words[0] == 'SXN_PATH':
-        sxn_path = words[1]
-        nb=nb+1
-        print '-_- SXN Path defined: ' + sxn_path
-    if words[0] == 'SXN_DEVICE':
-        sxn_device = words[1]
-        print '-_- Device defined: ' + sxn_device
-    
+print 'Version 2015-12-15'
+sxn_debug = 'NO';
+sxn_server = '78.67.160.17'
+sxn_path = '/sxndata/index.php'
+sxn_device = '/dev/ttyACM0'
+nb = 2
+#file = open('serial-to-http.cfg','r')
+#nb=0
+#sxn_debug = 'YES';
+#for line in file:
+#    words=line.split()
+#    print words
+#    if words[0] == 'SXN_DEBUG':
+#        sxn_debug = words[1]
+#        print '-_- Debug Mode On ' + sxn_debug
+#    if words[0] == 'SXN_SERVER':
+#        sxn_server = words[1]
+#        nb=nb+1
+#        print '-_- SXN Server is defined: ' + sxn_server
+#    if words[0] == 'SXN_PATH':
+#        sxn_path = words[1]
+#        nb=nb+1
+#        print '-_- SXN Path defined: ' + sxn_path
+#    if words[0] == 'SXN_DEVICE':
+#        sxn_device = words[1]
+#        print '-_- Device defined: ' + sxn_device
+ 
+
 ser = serial.Serial(sxn_device, 9600, timeout=None)
 t_req = ser.readline().decode('utf-8')[:-2]
 #time.sleep(5)    
