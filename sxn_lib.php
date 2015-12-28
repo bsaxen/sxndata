@@ -17,17 +17,21 @@ $g_heartbeat_units[5] = 'auto';
 $g_command_type_id   = array();
 $g_command_type_name = array();
 
+
 //=======================================
 function lib_listFileContent($filename)
 //======================================= 
 {
+    $now = date("Y-m-d H:i:s"); 
     $handle = fopen($filename, "r");
     if ($handle) 
     { 
         echo("$filename ");
         while (($line = fgets($handle)) !== false) 
         {
-          echo("$line<br>");
+          echo("$line $now<br>");
+          sscanf($line,"%s %s %s",$ip,$yymmdd,$hhmmss);
+          echo("ip=$ip date=$yymmdd time=$hhmmss<br>");
         }
         fclose($handle);
     } 
