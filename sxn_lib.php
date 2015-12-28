@@ -29,9 +29,11 @@ function lib_listFileContent($filename)
         echo("$filename ");
         while (($line = fgets($handle)) !== false) 
         {
-          echo("$line $now<br>");
+          echo("line=$line now=$now<br>");
           sscanf($line,"%s %s %s",$ip,$yymmdd,$hhmmss);
-          echo("ip=$ip date=$yymmdd time=$hhmmss<br>");
+          $stemp = $yymmdd.' '. $hhmmss;
+          //$then = new DateTime($stemp);
+          echo("then=$stemp ip=$ip date=$yymmdd time=$hhmmss<br>");
         }
         fclose($handle);
     } 

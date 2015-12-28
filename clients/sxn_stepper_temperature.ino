@@ -31,6 +31,8 @@ int g_sids[10] = {SIDN,SID1,SID2,SID3,SID4,SID5,SID6,SID7,SID8};
 
 // Arduino-RPi protocol
 #define NABTON_DATA     1 
+#define NABTON_LATEST   2 
+#define NABTON_MAILBOX  3 
 // Arduino Control Protocol
 #define ON_STEPPER_DIR   4
 #define ON_STEPPER_STEPS 5

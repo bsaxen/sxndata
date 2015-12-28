@@ -1,13 +1,13 @@
 #!/usr/bin/python
 #==================================================
 # serial-to-http.py
-# Author: Benny Saxen
 #==================================================
 # apt-get install python-pip
 # pip install pyserial
 #==================================================
 # History
 #==================================================
+# 2015-12-28: changed defualt name of sxn_name
 #==================================================
 #swid = N/A
 #devid = N/A
@@ -26,7 +26,7 @@ sxn_server = '127.0.0.1'
 sxn_path = '/sxndata/index.php'
 sxn_device = 'ttyACM0'
 sxn_ipaddress = 'x.x.x.x'
-sxn_name = 'RPi-void'
+sxn_name = 'serial-to-http'
 #==================================================
 nb = 2
 dev_found = 0

@@ -12,8 +12,8 @@
 #define SWID 11001
 #define DEVID 9999
 #define NFLOAT 2  // No of decimals i float value
-#define SIDN 1    // No of SIDs
-#define SID1 6  
+#define SIDN 4    // No of SIDs
+#define SID1 901  
 #define SID2 902  
 #define SID3 903  
 #define SID4 904  
@@ -26,9 +26,13 @@ int g_debug = 0;
 #define MAX_SID 10
 #define MAX_ORDERS 100
 int g_sids[10] = {SIDN,SID1,SID2,SID3,SID4,SID5,SID6,SID7,SID8};
-int g_device_delay = 20;
+int g_device_delay = 10;
+
 // Arduino-RPi protocol
 #define NABTON_DATA     1 
+#define NABTON_LATEST   2 
+#define NABTON_MAILBOX  3 
+
 //=================================================
 //
 // D0 RX used for serial communication to server (Raspberry Pi)
@@ -128,7 +132,7 @@ void NB_serialFlush()
   }
 }   
 //=================================================
-void NB_sendToGwy(int mid, int sid, float data, int other)
+int NB_sendToGwy(int mid, int sid, float data, int other)
 //=================================================
 {
   int ixSid = 0,i,negative=0;
@@ -181,6 +185,7 @@ if(g_debug==1){Serial.print("part2:");Serial.println(part2);}
      // Send meassage
      Serial.println(msg1);
      digitalWrite(5,LOW);
+    return(other);
 }
 //=================================================
 void recSerial()
@@ -302,18 +307,16 @@ void loop()
   String str;
   
     sensors.requestTemperatures();
-    for(i=1;i<=nsensors;i++)
+    for(i=0;i<nsensors;i++)
     {
-      tempC = sensors.getTempC(device[i-1]);    
-      str = String(tempC);
-      str.toCharArray(dl[i],8); 
-      if(tempC != -127)NB_sendToGwy(NABTON_DATA,g_sids[i],tempC,0);
-
-      strcpy(dm[i],"*"); 
+      tempC = sensors.getTempCByIndex(i);
+      dtostrf(tempC,5, NFLOAT, dl[i+1]);
+      if(tempC != -127)i = NB_sendToGwy(NABTON_DATA,g_sids[i+1],tempC,i);
+      strcpy(dm[i+1],"*"); 
       NB_oledDraw();
       delay(2000);  
       recSerial();
-      sprintf(dm[i],"%d",g_sids[i]);
+      sprintf(dm[i+1],"%d",g_sids[i+1]);
       NB_oledDraw();
     }
     delay(g_device_delay*1000);   

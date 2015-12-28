@@ -23,8 +23,11 @@ int g_debug = 0;
 #define MAX_ORDERS 100
 int g_sids[10] = {SIDN,SID1,SID2,SID3,SID4,SID5,SID6,SID7,SID8};
 int g_device_delay = 2;
+
 // Arduino-RPi protocol
 #define NABTON_DATA     1 
+#define NABTON_LATEST   2 
+#define NABTON_MAILBOX  3 
 //=================================================
 //
 // D0 RX used for serial communication to server (Raspberry Pi)

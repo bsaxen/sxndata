@@ -10,11 +10,11 @@
 #define DEVID 1209 
 // Adjust these paramaters acording to specific application
 #define NFLOAT 2  // No of decimals i float value
-#define SIDN  4   // No of SIDs
-#define SID1 1  
-#define SID2 2  
-#define SID3 3 
-#define SID4 4 
+#define SIDN  1   // No of SIDs
+#define SID1 901  
+#define SID2 902  
+#define SID3 903 
+#define SID4 904 
 #define SID5 905  
 #define SID6 906
 #define SID7 907
@@ -30,6 +30,8 @@ int g_device_delay = 20;
 
 // Arduino-RPi protocol
 #define NABTON_DATA     1 
+#define NABTON_LATEST   2 
+#define NABTON_MAILBOX  3 
 // Arduino Control Protocol
 #define ON_STEPPER_DIR   4
 #define ON_STEPPER_STEPS 5
@@ -165,7 +167,7 @@ void NB_serialFlush()
 }   
 
 //=================================================
-void NB_sendToGwy(int mid, int sid, float data, int other)
+int NB_sendToGwy(int mid, int sid, float data, int other)
 //=================================================
 {
   int ixSid = 0,i,negative=0;
@@ -218,6 +220,7 @@ if(g_debug==1){Serial.print("part2:");Serial.println(part2);}
      // Send meassage
      Serial.println(msg1);
      digitalWrite(5,LOW);
+    return(other);
 }
 
 //=================================================
@@ -341,7 +344,8 @@ void setup()
 void loop()
 //=================================================
 {
-      NB_sendToGwy(NABTON_DATA,g_sids[1],0.0,0);
+    // Send dummay data
+      int i = NB_sendToGwy(NABTON_MAILBOX,g_sids[1],0.0,0);
       strcpy(dm[1],"*"); 
       NB_oledDraw();
       delay(2000);  

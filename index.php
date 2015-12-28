@@ -149,7 +149,7 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
     $name  = $_GET["name"];
     $ip    = $_GET["ip"];
     
-   setClientStatus($name,$ip);
+   if($name)setClientStatus($name,$ip);
 
    if($nsid > 9 || $nsid < 1) die;
 

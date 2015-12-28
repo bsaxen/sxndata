@@ -3,16 +3,12 @@
 //==================================================
 // History
 //==================================================
-// Software Id: 41001 2015-11-21	First version
+// Software Id: 41001 2015-11-21  First version
 // 2015-12-18: increased stepper resolution, corrected NB_sendToGateway
+// 2015-12-28: Added name and ip in url
 //==================================================
-// SWID platform,application,version
-// platform: 1=arduino(RPi), 2=raspberryPi(arduino), 3=raspberryPi(standalone), 4=arduino(standalone), 5=android
-//==================================================
-#define SWID 41001
-#define DEVID 9999
 #define NFLOAT 2  // No of decimals i float value
-#define SIDN  1   // No of SIDs
+#define SIDN  3   // No of SIDs
 #define SID1 901  // Temp 1 and Control SID
 #define SID2 902  // Temp 2
 #define SID3 903  // Temp 3
@@ -22,16 +18,21 @@
 #define SID7 907
 #define SID8 908
 int g_debug = 0;
+const char* g_clientName = "ArduinoEthShield";
+int g_device_delay = 3;
 //==================================================
 #define MAX_SID 8
 //#define MAX_ORDERS 100
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 char server[] = "192.168.1.97";  
 int g_sids[10] = {SIDN,SID1,SID2,SID3,SID4,SID5,SID6,SID7,SID8};
-int g_device_delay = 3;
+char g_sIp[80];
 
 // Arduino-RPi protocol
 #define NABTON_DATA     1 
+#define NABTON_LATEST   2 
+#define NABTON_MAILBOX  3 
+
 #define LED_INTERNET 30 
 //=================================================
 //
@@ -62,6 +63,7 @@ int g_device_delay = 3;
 // D21 SCL I2C OLED
 // D30 Internet connection status
 //=================================================
+#include <stdio.h>
 #include <SPI.h>
 #include <Ethernet.h>
 #include <OneWire.h>
@@ -74,6 +76,7 @@ int g_device_delay = 3;
 // Ethernet
 //=================================================
 IPAddress ip(192, 168, 1, 97);
+IPAddress ipAddress;
 EthernetClient client;
 //=================================================
 // One Wire
@@ -89,10 +92,10 @@ int nsensors = 0;
 // OLED I2C
 //==================================================
 
-//U8GLIB_SSD1306_128X64 u8g(13, 11, 10, 9);// SW SPI protocol(4 pins): SCK = 13, MOSI = 11, CS = 10, A0 = 9	
+//U8GLIB_SSD1306_128X64 u8g(13, 11, 10, 9);// SW SPI protocol(4 pins): SCK = 13, MOSI = 11, CS = 10, A0 = 9 
 //U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE); // Small display I2C protocol (2 pins)
 U8GLIB_SH1106_128X64 u8g(U8G_I2C_OPT_NONE); // Large display
-char dl[5][8],dm[5][8],dr[5][8];
+char dl[8][8],dm[8][8],dr[8][8];
 //=================================================
 void NB_oledDraw() 
 //=================================================
@@ -148,16 +151,17 @@ void NB_serialFlush()
 }   
 
 //=================================================
-void NB_sendToGwy(int mid, int sid, float data, int other)
+int NB_sendToGwy(int mid, int sid, float data, int other)
 //=================================================
 {
+ Serial.print("sid=");Serial.println(sid);
   int ixSid = 0,i,negative=0;
   char msg1[100],msg2[50],checksum[20];
      strcpy(msg1," ");
      strcpy(msg2," ");
      digitalWrite(5,HIGH);
      // Mandatory part of message
-     sprintf(msg1,"?mid=%d&nsid=%d&sid1=%d",mid,1,sid);
+     sprintf(msg1,"GET /sxndata/index.php?mid=%d&nsid=%d&sid1=%d",mid,1,sid);
 if(g_debug==1){Serial.print("data:");Serial.println(data);}      
      if(mid == NABTON_DATA)
      {
@@ -180,27 +184,33 @@ if(g_debug==1){Serial.print("part2:");Serial.println(part2);}
        if(negative == 0)
        {
          if(part2 < 10)
-           sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
+           sprintf(msg2,"&name=%s&ip=%s&dat1=%d.0%d",g_clientName,g_sIp,part1,part2);
          else 
-           sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
+           sprintf(msg2,"&name=%s&ip=%s&dat1=%d.%d",g_clientName,g_sIp,part1,part2);
        }
        if(negative == 1)
        {
          if(part2 < 10)
-           sprintf(msg2,"&devid=%d&swid=%d&dat1=-%d.0%d",DEVID,SWID,part1,part2);
+           sprintf(msg2,"&name=%s&ip=%s&dat1=-%d.0%d",g_clientName,g_sIp,part1,part2);
          else 
-           sprintf(msg2,"&devid=%d&swid=%d&dat1=-%d.%d",DEVID,SWID,part1,part2);
+           sprintf(msg2,"&name=%s&ip=%s&dat1=-%d.%d",g_clientName,g_sIp,part1,part2);
        }
        strcat(msg1,msg2);
      }
-    
-     // Create checksum
-     sprintf(checksum,": %d",strlen(msg1));
-     strcat(msg1,checksum);
-     
-     // Send meassage
-     Serial.println(msg1);
+
+    client.stop();
+    if(client.connect(server, 80))
+     {
+       digitalWrite(LED_INTERNET,HIGH);
+       Serial.print("msg1=");Serial.println(msg1);
+       client.println(msg1);
+       client.println("Host: 127.0.0.1");
+       client.println("Connection: close");
+       client.println();
+     }
+ 
      digitalWrite(5,LOW);
+     return(other);
 }
 //=================================================
 void clearOled()
@@ -273,8 +283,7 @@ void setup()
   g_sids[7] = SID7;
   g_sids[8] = SID8;
   
-  sprintf(dl[1],"%d",SWID);
-  sprintf(dm[1],"%d",DEVID);
+
   sprintf(dr[1],"%d",g_device_delay);
   for(i=1;i<=SIDN;i++)
   {
@@ -289,10 +298,12 @@ void setup()
     // try to congifure using IP address instead of DHCP:
     Ethernet.begin(mac, ip);
   }
-  Serial.print("My IP address: ");
-  Serial.println(Ethernet.localIP());
-  // give the Ethernet shield a second to initialize:
-  sprintf(dm[2],"?");
+    
+  Serial.print("Local address: ");
+  ipAddress = Ethernet.localIP();
+  sprintf(g_sIp,"%d.%d.%d.%d", ipAddress[0],ipAddress[1],ipAddress[2],ipAddress[3]);
+  Serial.println(ipAddress);
+  sprintf(dm[1],"?");
   NB_oledDraw();
 
   delay(1000);
@@ -301,38 +312,39 @@ void setup()
   while (!client.connected()) {
         client.connect(server, 80);
         delay(300);
-        sprintf(dm[2],"*");
+        sprintf(dm[1],"*");
         NB_oledDraw();
-        sprintf(dm[2],".");
+        sprintf(dm[1],".");
         delay(300);
         NB_oledDraw();
   }
-  sprintf(dm[2],"ok");
+  sprintf(dm[1],"ok");
   NB_oledDraw();
 
 }
-
+  
 //=================================================
 void loop()
 //=================================================
 {
-  int i,nbytes,count;
-  float tempC;
-  char c='1';
-  String str;
+    int j,nbytes,count;
+    float tempC;
+    char c='1';
 
     sensors.requestTemperatures();
-    for(i=1;i<=nsensors;i++)
+   
+    for(j=0;j<nsensors;j++)
     {
-      tempC = sensors.getTempC(device[i-1]);    
-      str = String(tempC);
-      str.toCharArray(dl[i+1],8); 
-      if(tempC != -127)NB_sendToGwy(NABTON_DATA,g_sids[i],tempC,0);
+      tempC = sensors.getTempCByIndex(j);
+      dtostrf(tempC,5, NFLOAT, dl[2+j]);
+      if(tempC != -127)j= NB_sendToGwy(NABTON_DATA,g_sids[j+1],tempC,j);
+      
       delay(g_device_delay*1000);  
-      //recSerial();
+      
       nbytes = client.available();
       Serial.print(nbytes); 
       count = 0;
+      
       while (nbytes != 0 && c != -1) 
       {
          count++;
@@ -340,7 +352,6 @@ void loop()
          Serial.print(c);
       }
       Serial.println(count); 
-
       c = '1';
       NB_oledDraw();
     }
