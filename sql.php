@@ -4,8 +4,10 @@ require_once('sxn_sql_lib.php');
 
     //$sid = $_GET['sid'];
     //parse_str(implode('&', array_slice($argv, 1)), $_GET);
-    $sid = (isset($_GET['sid']) ? $_GET['sid'] : null);
-
+    $sid  = (isset($_GET['sid']) ? $_GET['sid'] : null);
+    $op   = (isset($_GET['op']) ? $_GET['op'] : null);
+    $sidX = (isset($_GET['sidX']) ? $_GET['sidX'] : null);
+    $sidY = (isset($_GET['sidY']) ? $_GET['sidY'] : null);
     $date = (isset($_GET['startDate']) ? $_GET['startDate'] : null);
 //echo("1 $startDate<br>");
     //$date = DateTime::createFromFormat('m/d/Y', $startDate);
@@ -29,7 +31,9 @@ require_once('sxn_sql_lib.php');
     $password = "amazon";   
     $host = "localhost";
 
-
+    $table = SXN_COLLECTOR_TABLE_DATA_PREFIX.$sid; 
+    $tableX = SXN_COLLECTOR_TABLE_DATA_PREFIX.$sidX; 
+    $tableY = SXN_COLLECTOR_TABLE_DATA_PREFIX.$sidY; 
 
 //    $g_dbM2 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_COLLECTOR);
 //
@@ -47,10 +51,13 @@ require_once('sxn_sql_lib.php');
     //echo json_encode($data);
 
 
-    $database="nb_db_collector";
+    $database=SXN_DATABASE_COLLECTOR;
     $server = mysql_connect($host, $username, $password);
     $connection = mysql_select_db($database, $server);
-    $myquery = "SELECT * FROM  nb_data_$sid WHERE ts BETWEEN '$tStart 00:00:00' AND '$tEnd 23:59:59'";
+if(!$op)
+    $myquery = "SELECT * FROM  $table WHERE ts BETWEEN '$tStart 00:00:00' AND '$tEnd 23:59:59'";
+//if($op == 'ADD')
+//    $myquery = "SELECT $tableX. FROM  $table WHERE ts BETWEEN '$tStart 00:00:00' AND '$tEnd 23:59:59'";
 //echo("$myquery");
     $query = mysql_query($myquery);
     if ( ! $query ) {

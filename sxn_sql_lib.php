@@ -20,7 +20,7 @@ class DataManager
 
 	//Result variables
 	private $result_;
-
+//----------------------------------------------------------------------------------------------------    
 	public function __construct($user, $pass, $server, $dbName)
 	{
 		$this->username_   = $user;
@@ -31,12 +31,12 @@ class DataManager
 
 		$this->openDataBase();
 	}
-
+//----------------------------------------------------------------------------------------------------    
 	public function __destruct()
 	{
 		$this->closeDataBase();
 	}
-
+//----------------------------------------------------------------------------------------------------    
 	/*
 	* Function opensDataBase
 	* Desc: Opens database and sets flag isDbOpen to true if success 
@@ -56,7 +56,7 @@ class DataManager
 			$this->isDbOpen_ = true;
 		}
 	}
-
+//----------------------------------------------------------------------------------------------------    
 	/*
 	* Function closeDataBase
 	* Desc: Closes database 
@@ -65,7 +65,7 @@ class DataManager
 	{
 		$this->mysqli_->close();
 	}
-
+//----------------------------------------------------------------------------------------------------    
 	/*
 	* Function selectAllFromTable
 	* Desc: select all columns from table with optional $conditions 
@@ -98,7 +98,7 @@ class DataManager
 	}
     
     
-    
+//----------------------------------------------------------------------------------------------------    
 	public function selectFromQuery($query)
 	{
         if ($this->isDbOpen_)
@@ -106,7 +106,7 @@ class DataManager
             $this->result_ = $this->mysqli_->query($query);
         }
 	}
-
+//----------------------------------------------------------------------------------------------------    
 	/*
 	* Function retrieveResult
 	* Desc: Is called to retrieve data from select funtion
@@ -127,7 +127,7 @@ class DataManager
 			return false;
 		}
 	}
-
+//----------------------------------------------------------------------------------------------------    
 	/*
 	* Function retrieveNumberOfResult
 	* Desc: Is called after Select query
@@ -138,7 +138,7 @@ class DataManager
 	{
 		return $data = $this->result_->num_rows;
 	}
-
+//----------------------------------------------------------------------------------------------------    
 	/*
 	* Function checkIfValueExists
 	* Desc: Check if value exists in column $columnName in table $tableName
@@ -159,7 +159,7 @@ class DataManager
 			}
 		}
 	}
-
+//----------------------------------------------------------------------------------------------------    
 	/*
 	* Function deleteRow
 	* Desc: Delete row in table
@@ -175,7 +175,7 @@ class DataManager
 		}
 	}
 
-		
+//----------------------------------------------------------------------------------------------------   	
 	/*
 	* Function insertRow
 	* Desc: Insert row in table
@@ -209,7 +209,7 @@ class DataManager
 			}
 		}
 	}
-
+//----------------------------------------------------------------------------------------------------    
     /*
 	* Function updateRow
 	* Desc: update row/rows in table
@@ -238,7 +238,7 @@ class DataManager
 			}
 		}
 	}
-    
+//----------------------------------------------------------------------------------------------------        
     /*
 	* Function selectDistrinctDate
 	* Desc: Gets distinct dates from timestamp of table
@@ -252,7 +252,7 @@ class DataManager
 		}
 	}
  
-    
+//----------------------------------------------------------------------------------------------------        
        /*
 	* Function selectMaxValue
 	* Desc: Gets max value from of table
@@ -272,7 +272,7 @@ class DataManager
             }	 	
 		}
 	}
-
+//----------------------------------------------------------------------------------------------------    
     /*
 	* Function selectMinValue
 	* Desc: Gets min value from of table
@@ -291,8 +291,28 @@ class DataManager
                 $this->result_ = $this->mysqli_->query("SELECT MIN($column) FROM $table WHERE $conditions");
             }	 	
 		}
-	}    
-    
+	} 
+//----------------------------------------------------------------------------------------------------    
+    /*
+	* Function selectXminusY TBD
+	* Desc: Gets Value X minus ValueY from of table
+	* Return: none
+	*/
+	public function selectXminusY($tableX,$columnX,$tableY,$columnY,$conditions)
+	{
+		if ($this->isDbOpen_)
+		{
+            if($conditions == '')
+            {
+				$this->result_ = $this->mysqli_->query("SELECT $columnX - $columnY FROM $table");
+            }
+            else
+            {
+                $this->result_ = $this->mysqli_->query("SELECT $columnX - $columnY FROM $table WHERE $conditions");
+            }	 	
+		}
+	} 
+//----------------------------------------------------------------------------------------------------        
 	/*
 	* Function createSidTable
 	* Desc: Create SID table
@@ -319,6 +339,6 @@ class DataManager
 	}
 
 }
-
-
+//----------------------------------------------------------------------------------------------------    
+// End of file
 ?>

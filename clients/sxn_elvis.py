@@ -1,16 +1,12 @@
 #==================================================
-# RPI_elvis.py
-# 2015-12-11 
+# sxn_elvis.py
+# 2015-12-28 
 #==================================================
-# SWID platform,application,version
-# platform: 1=arduino(RPi), 2=raspberryPi(arduino), 3=raspberryPi(standalone), 4=arduino(standalone), 5=android
-swid = 21301
-devid = 9999
-
 import time
 import datetime
 import RPi.GPIO as GPIO
 import httplib
+import os
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(12, GPIO.OUT) # Write file led
@@ -36,13 +32,22 @@ dp = 0
 #==================================================
 # Configuration
 #==================================================
-sid       = 5
-boti      = 100
-nb_server = 'http://78.67.160.17/'
+sid        = 5
+boti       = 100
+nb_server  = '78.67.160.17'
 log_local  = 1
 log_server = 1
+sxn_name   = 'El-Kil'
 #==================================================
-
+os.system("ifconfig > ipaddress.work")
+file = open('ipaddress.work','r')
+for line in file:
+    if 'Bcast' in line:
+        words=line.split(' ')
+        #print words
+        work=words[11].split(':')
+        sxn_ipaddress = work[1] 
+        print 'local ipaddress ' + sxn_ipaddress
 #==================================================
 def pulseEvent(x):
 	global t1,t2,dt,log_file,nb_server,p1,p2,dp
@@ -57,7 +62,7 @@ def pulseEvent(x):
 		p1 = time.time()
 		conn = httplib.HTTPConnection(nb_server)
 		#t_req = "/nabton/NDSServer/NDSCollector.php?mid=1&sid=%d&data=%.2f" % (sid,elpow)
-		t_req = "/sxndata/index.php?mid=1&swid=%d&devid=%d&nsid=1&sid1=%d&dat1=%.2f" % (swid,devid,sid,elpow)
+		t_req = "/sxndata/index.php?mid=1&name=%s&ip=%s&nsid=1&sid1=%d&dat1=%.2f" % (sxn_name,sxn_ipaddress,sid,elpow)
 		try:
 			conn.request("GET", t_req)
 			try:

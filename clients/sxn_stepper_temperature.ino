@@ -10,10 +10,10 @@
 #define SWID 2015
 #define DEVID 1218 
 #define SIDN  4   // No of SIDs
-#define SID1 1  
-#define SID2 2  
-#define SID3 3 
-#define SID4 4 
+#define SID1 901  
+#define SID2 902  
+#define SID3 903 
+#define SID4 904 
 #define SID5 905  
 #define SID6 906
 #define SID7 907

@@ -45,9 +45,9 @@ if dev_found == 0:
     file = open('arduino_device.work','r')
     for line in file:
         words=line.split()
-        print words
-        if words[0] == 'DEVICE':
-            sxn_device = words[1]
+        #print words
+        if words[0]:
+            sxn_device = words[0]
             print 'Arduino  Device found ' + sxn_device
             dev_found = 1
             
