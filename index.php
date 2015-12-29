@@ -120,7 +120,7 @@ function setClientStatus($name,$ip)
 //======================================= 
 {
    $filename = $name.'.ip';
-   $now = date("Y-m-d H:i:s"); 
+   $now  = date("Y-m-d H:i:s"); 
    $cont = $ip.' '.$now;
    if (file_exists($filename))
    {
@@ -175,7 +175,8 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
         $dat[8]  = $_GET["dat8"];
         $dat[9]  = $_GET["dat9"];
     }
-    
+  
+ 
     for($ii=1;$ii<=$nsid;$ii++)
     {
 	   $sid = $msid[$ii];
@@ -183,10 +184,11 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 	   $dbM = new DataManager   (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_ADMIN);
 	   $dbM->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS,
 							 SXN_ADMIN_STREAMS_COLUMN_SID."=".$sid); 
-
+  
 	   $numRes = $dbM->retrieveNumberOfResults();
 	   if($numRes == 1)
 	   {
+   
 		  if ($data = $dbM->retrieveResult())
 		  {
 			 if($mid == SXN_DATA)
@@ -195,7 +197,7 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 		    	   $dbC = new DataCollector (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_COLLECTOR);
 				   $dbC->openDataBase();
 				   $success = $dbC->insertData($sid, $dd);
-	               echo "$sid ";
+	               echo "$sid $dd DATA";
                    executeSidFunction($sid);
                    getControlMessage($sid);
 		      }
@@ -203,12 +205,13 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
              if($mid == SXN_LATEST)
              {
                  $value = lib_getLatestValue($sid);
-                 echo("$sid $value");
+                 echo("$sid $value LATEST");
              }
              if($mid == SXN_MAILBOX)
              { 
                  executeSidFunction($sid);
                  getControlMessage($sid);
+                 echo("$sid $value MAILBOX");
              }
 		     
 		  }

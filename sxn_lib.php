@@ -17,23 +17,40 @@ $g_heartbeat_units[5] = 'auto';
 $g_command_type_id   = array();
 $g_command_type_name = array();
 
-
 //=======================================
 function lib_listFileContent($filename)
 //======================================= 
 {
     $now = date("Y-m-d H:i:s"); 
+    
     $handle = fopen($filename, "r");
     if ($handle) 
     { 
-        echo("$filename ");
         while (($line = fgets($handle)) !== false) 
         {
-          echo("line=$line now=$now<br>");
           sscanf($line,"%s %s %s",$ip,$yymmdd,$hhmmss);
           $stemp = $yymmdd.' '. $hhmmss;
-          //$then = new DateTime($stemp);
-          echo("then=$stemp ip=$ip date=$yymmdd time=$hhmmss<br>");
+          //$stemp = '2015-12-27 12:10:12';
+          //$now = '2015-12-31 16:15:15';            
+          $start   = strtotime( $stemp );
+          $end     = strtotime( $now );
+          $temp    = $end - $start;  
+          $days    = floor($temp/86400);$rest = $temp%86400;
+          $hours   = floor($rest/3600);$rest = $temp%3600;
+          $minutes = floor($rest/60);$seconds = $temp%60;
+          $nmin    = floor($temp/60); 
+          echo("<h2>Client Status $now</h2>");
+          if($nmin >= 0)
+          {
+                if($nmin < 60)echo("<p style=\"color:#00CD00\">$filename [$ip] Online($nmin)</p>");
+                if($nmin >= 60)
+                {
+                    echo("<p style=\"color:#0099ff\">$filename [$ip]  Offline($days days $hours hours $minutes minutes) $stemp</p>");
+                }
+          }
+          else
+                if($nmin < 0)echo("<p style=\"color:#CD0000\">$filename [$ip] Error($nmin)</p>");
+            
         }
         fclose($handle);
     } 
