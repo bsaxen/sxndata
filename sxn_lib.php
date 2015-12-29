@@ -21,7 +21,7 @@ $g_command_type_name = array();
 function lib_listFileContent($filename)
 //======================================= 
 {
-    $now = date("Y-m-d H:i:s"); 
+ 
     
     $handle = fopen($filename, "r");
     if ($handle) 
@@ -30,6 +30,7 @@ function lib_listFileContent($filename)
         {
           sscanf($line,"%s %s %s",$ip,$yymmdd,$hhmmss);
           $stemp = $yymmdd.' '. $hhmmss;
+          $now = date("Y-m-d H:i:s"); 
           //$stemp = '2015-12-27 12:10:12';
           //$now = '2015-12-31 16:15:15';            
           $start   = strtotime( $stemp );
@@ -39,7 +40,6 @@ function lib_listFileContent($filename)
           $hours   = floor($rest/3600);$rest = $temp%3600;
           $minutes = floor($rest/60);$seconds = $temp%60;
           $nmin    = floor($temp/60); 
-          echo("<h2>Client Status $now</h2>");
           if($nmin >= 0)
           {
                 if($nmin < 60)echo("<p style=\"color:#00CD00\">$filename [$ip] Online($nmin)</p>");
@@ -61,6 +61,8 @@ function lib_listFileContent($filename)
 function lib_listIpFiles($filename)
 //======================================= 
 {
+    $now = date("Y-m-d H:i:s"); 
+    echo("<h2>Client Status $now</h2>");
     $handle = fopen($filename, "r");
     if ($handle) 
     {    
