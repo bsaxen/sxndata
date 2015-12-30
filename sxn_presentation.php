@@ -48,6 +48,7 @@ if(isset($_GET['date2']))
 //$tStart = date('Y-m-d', strtotime($startDate));
 //$tEnd   = date('Y-m-d', strtotime($endDate));
 
+echo("<h1>SXNDATA 2015-12-30</h1>");
 echo("Start Date: $startDate  End Date: $endDate<br>");
 $do = (isset($_GET['do']) ? $_GET['do'] : null);
 
@@ -184,7 +185,7 @@ body {
 }
 
 </style>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
   
   <script src="../calendar/jquery-ui-1.11.4.custom/external/jquery/jquery.js"></script>
   <script src="../calendar/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
