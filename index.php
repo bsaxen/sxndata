@@ -218,7 +218,7 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
              if($mid == SXN_DERLATEST)
              {
                  $value = lib_getLatestDerivative($sid);
-                 echo("$sid ,$value, DERLATEST");
+                 echo("$sid $value DERLATEST");
              }
              if($mid == SXN_MAILBOX)
              { 
