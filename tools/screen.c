@@ -46,6 +46,7 @@ char g_server[80];
 float g_modMax;
 int g_ndiv=1;
 int g_yscale;
+int g_mid = 2;
 
 void writeInt(int number,int x, int y, int color);
 void writeFloat(float value,int x, int y, int color);
@@ -114,7 +115,7 @@ void readFile(int x, int y, char filename[],int color)
        return;
 }
 //==========================================
-float readLatestSidValue(int sid)
+float readLatestSidValue(int sid,int mid)
 //==========================================
 {
        FILE * fp;
@@ -125,7 +126,7 @@ float readLatestSidValue(int sid)
        int tsid;
        float value;
 
-       sprintf(sys,"wget -q -O server_response.txt \"http://%s/sxndata/index.php?mid=2&nsid=1&sid1=%d\"",g_server,sid); 
+       sprintf(sys,"wget -q -O server_response.txt \"http://%s/sxndata/index.php?mid=%d&nsid=1&sid1=%d\"",g_server,mid,sid); 
        //printf("%s",sys);
        system(sys);
 
@@ -137,6 +138,15 @@ float readLatestSidValue(int sid)
        {
            line = trim(line);
            sscanf(line,"%d %f",&tsid,&value);
+           //writeFloat(value,70,g_rows, C_BLUE);
+           //writeString(line,5,g_rows, C_RED);
+           if(mid == 4) 
+           {
+               value = value*100.;
+               if(value < 0)value =value*(-1.0);
+               //writeFloat(value,40,g_rows, C_RED);
+           }
+          // writeFloat(value,40,g_rows, C_RED);
        }
 
        fclose(fp);
@@ -247,8 +257,9 @@ void histogram(int sid)
 {
     int i,j,k=0,temp,height = g_rows - 1;
     int color=0,div,rscale = 0,rn1,rn2;
+    char sstr[40];
     
-    float fx = readLatestSidValue(sid);
+    float fx = readLatestSidValue(sid,g_mid);
     // Get max and min value
     g_fmax = 0.;
     g_fmin = 999999.;
@@ -277,20 +288,20 @@ void histogram(int sid)
         }
     }
     
-    
+
     rn1 = getRowNumber(g_fmax,3000.);
     rn2 = getRowNumber(g_fmax,1000.);
     //writeFloat(g_fmax,7,g_rows-1, 0);
-    writeFloat(fx,g_cols/2,g_rows, C_RED);
+    sprintf(sstr,"%d Watt",(int)fx);
+    //writeFloat(fx,g_cols/2,g_rows-1, C_RED);
+    writeString(sstr,g_cols/2,g_rows-1, C_RED);
+ 
     g_fmin = 0.0;
     for(i=1;i<=g_cols-5;i++)
     {
-         temp = (int)(height*(g_fbuff[i]-g_fmin)/(g_fmax - g_fmin));
-             
-             
+         if(g_fmax > 0)temp = (int)(height*(g_fbuff[i]-g_fmin)/(g_fmax - g_fmin));  
          for(j=1;j<=temp;j++) 
          {
- 
             if (j >= rn1)color = C_YELLOW;
             else if (j >= rn2)color = C_RED;
             if (j < rn2)color = C_GREEN;
@@ -302,44 +313,58 @@ void histogram(int sid)
 int main(int argc, char **argv)
 //==========================================
 {
-    int i,j,x=0,y=0,sid=303,data[200],delay;
+    int i,j,x=0,y=0,sid=1,data[200],delay;
     char ch,sys[240];
- 
-    if(argc == 1 || argc > 3)
+    
+    if(argc == 1 || argc > 4)
     {
-      printf("Syntax: ./screen <sid> <delay>\n");
+      printf("Syntax: ./screen <sid> <delay> <mid>\n");
       exit(0);
     }
     if(argc == 2)
     {
         sscanf(argv[1],"%d",&sid);
         delay = 3;
+        g_mid = 2;
     }
     if(argc == 3)
     {
        sscanf(argv[1],"%d",&sid);
        sscanf(argv[2],"%d",&delay);
+       g_mid = 2;
+    }
+    if(argc == 4)
+    {
+       sscanf(argv[1],"%d",&sid);
+       sscanf(argv[2],"%d",&delay);
+       sscanf(argv[3],"%d",&g_mid);
     }
     ioctl(0, TIOCGWINSZ, &w);
     g_rows = w.ws_row-1;
     g_cols = w.ws_col-2;
- 
+
     initTool();
+  
     g_iter = 0;
     while (1)
     {
-      writeInt(sid,7,g_rows, 0); 
-      writeInt(delay,14,g_rows, 0); 
+  
+      writeInt(sid,7,g_rows, C_YELLOW); 
+      writeInt(delay,14,g_rows, C_YELLOW); 
+   
       histogram(sid);
+  
       display(0);
+    
       //printf("%s>>",KNRM);   
 
       sleep(delay);
+         printf("a8,");
       //ch = getchar();
-      if (ch=='q')
-	  {
-	    exit(0);
-	  }
+      //if (ch=='q')
+	  //{
+	   // exit(0);
+	//  }
     }
-    return 0;  
+    //return 0;  
 }

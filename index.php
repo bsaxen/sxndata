@@ -194,13 +194,12 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 	   if($numRes == 1)
 	   {
           while($data = $dbM->retrieveResult())
-          {
-             $tag = $data[SXN_ADMIN_STREAMS_COLUMN_TAG];
-             if($tag) $name = $tag;
-             setClientStatus($sid,$name,$ip);
-              
+          {   
 			 if($mid == SXN_DATA)
 			 {
+                   $tag = $data[SXN_ADMIN_STREAMS_COLUMN_TAG];
+                   if($tag) $name = $tag;
+                   setClientStatus($sid,$name,$ip);
                   //echo SXN_USER, SXN_PASSWORD, \"localhost\", SXN_DATABASE_COLLECTOR)";
 		    	   $dbC = new DataCollector (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_COLLECTOR);
 				   $dbC->openDataBase();
