@@ -213,7 +213,7 @@ function uploadFile()
   return($newname); 
 }
 //======================================================================
-function readDataTypes()
+function lib_readDataTypes()
 //======================================================================
 {
   global $g_data_name,$g_data_unit,$g_data_type_map;
@@ -226,7 +226,7 @@ function readDataTypes()
    while($data = $g_dbM1->retrieveResult())
    {
     $ii++;
-    echo $data[SXN_ADMIN_DATATYPES_COLUMN_NAME]."-".$data[SXN_ADMIN_DATATYPES_COLUMN_UNIT]." $ii<br>";
+    //echo $data[SXN_ADMIN_DATATYPES_COLUMN_NAME]."-".$data[SXN_ADMIN_DATATYPES_COLUMN_UNIT]." $ii<br>";
     //$g_data_id[$ii]   = $data[SXN_ADMIN_DATATYPES_COLUMN_DATATYPEID];
     $g_data_name[$ii] = $data[SXN_ADMIN_DATATYPES_COLUMN_NAME];
     $g_data_unit[$ii] = $data[SXN_ADMIN_DATATYPES_COLUMN_UNIT];
@@ -276,6 +276,30 @@ function lib_getLatestValue($sid)
 		       $value = $data[$par];
                return($value);
             }
+	}
+    return(SXN_NO_VALUE);
+}
+//======================================================================
+function lib_getLatestDerivative($sid) 
+//======================================================================
+{
+    global $g_dbM2;
+    $sql = "SELECT * FROM ".SXN_COLLECTOR_TABLE_DATA_PREFIX.$sid." ORDER BY ".SXN_GENERAL_COLUMN_ID." DESC  LIMIT 2";
+    $g_dbM2->selectFromQuery($sql);
+    $numRes = $g_dbM2->retrieveNumberOfResults();
+    if($numRes>0)
+    { 
+            $par1 = SXN_COLLECTOR_DATA_COLUMN_VALUE;
+            $par2 = SXN_GENERAL_COLUMN_TIMESTAMP;
+            $ix = 0;
+            while($data = $g_dbM2->retrieveResult())
+		    {
+               $ix++;
+		       $value[$ix] = $data[$par1];
+               $timed[$ix] = strtotime($data[$par2]);
+            }
+            $res  = ($value[1] - $value[2])/($timed[1] - $timed[2]);
+            return($res);
 	}
     return(SXN_NO_VALUE);
 }

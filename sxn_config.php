@@ -966,17 +966,34 @@ if($do == 'init_db')
 {
   addUser('admin','amazon',1);  
   addUser('benny','amazon',2);
+  addUser('berndt','vedkap',2);
+  addUser('micke','lidback',2);
    
   addDataType('Temperature','Celcius');
   addDataType('Body Weight','Kilogram');
   addDataType('Electric Power','Watt'); 
   
   addCommandType('SXN_DEVICE_DELAY','Delay(ms) device gwy');   
-
-  addCommandType('SXN_STEPPER_CTRL','Control of stepper motor');   
-
-  addSid(901,"","","sxn test901","test901","SXN Only test901",1,1);    
-  addSid(902,"","","sxn test902","test902","SXN Only test902",1,1);                               
+  addCommandType('SXN_STEPPER_CTRL','dir step delay');   
+    
+//function addSid($sid,$type,$unit,$title,$tag,$description,$owner_uid,$permission) 
+  addSid(901,1,1,"sxn test901","test901","SXN Only test901",1,1);    
+  addSid(902,1,1,"sxn test902","test902","SXN Only test902",1,1);
+    
+  addSid(1,1,1,"Heat Water Out 1","HeatWaterOut1","Heat Water Out 1",1,1);    
+  addSid(2,1,1,"Ondoor Temp Kil 2","OndoorTempKil2","Ondoor Temp Kil 2",1,1);        
+  addSid(3,1,1,"Heat Water In 3","HeatWaterIn3","Heat Water In 3",1,1);    
+  addSid(4,1,1,"Smoke Temp Kil 4","SmokeTempKil4","Smoke Temp Kil 4",1,1);    
+  addSid(5,1,1,"El Kil 5","ElKil5","El Kil 5",1,1);    
+  addSid(6,1,1,"Outdoor Kil 6","OutDoor6","Outdoor Kil 6",1,1);    
+  addSid(14,1,1,"Fridge Huskvarna 14","FridgeHuskvarna14","Fridge Huskvarna 14",1,1);    
+  addSid(301,1,1,"El Lidback 301","ElLidback301","El Lidback 301",1,1);    
+  addSid(302,1,1,"El Nytomta 302","ElNytomta302","El Nytomta 302",1,1);    
+  addSid(303,1,1,"Indoor Temp Nytomta 303","IndoorTempNytomta303","Indoor Temp Nytomta 303",1,1);    
+  addSid(401,1,1,"Torsgatan 401","Torsgatan401","Torsgatan 401",1,1);    
+  addSid(402,1,1,"Torsgatan 402","Torsgatan402","Torsgatan 402",1,1);    
+  addSid(403,1,1,"Torsgatan 403","Torsgatan403","Torsgatan 403",1,1); 
+  addSid(404,1,1,"Torsgatan 404","Torsgatan404","Torsgatan 404",1,1);  
 }
 //**********************************************************************
 //**********************************************************************
@@ -1225,7 +1242,7 @@ echo("<br>");
 
 if($do == 'add_sid')
 {
-  readDataTypes(); 
+  lib_readDataTypes(); 
   echo(" <table border=\"1\">
           <form action=\"sxn_config.php\" method=\"post\">
               <input name=\"f_action\" type=\"hidden\" value=\"addSidForm\" />
@@ -1296,7 +1313,7 @@ if($do == 'del_sid')
 
 if($do == 'list_sid')
 {
-    readDataTypes(); 
+    lib_readDataTypes(); 
    echo("<table border=\"1\">");
      echo("<tr>");
      echo("<td>SID</td> ");

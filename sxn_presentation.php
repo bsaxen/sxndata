@@ -20,7 +20,7 @@ if(!startDate)
 $xZoom    = $_SESSION['xZoom'];
 if(!$xZoom) $xZoom = 1;
 $yZoom    = $_SESSION['yZoom'];
-if(!$yZoom) $yZoom = 1;
+if(!$yZoom) $yZoom = 0;
 $s_sid    = $_SESSION['s_sid'];
 
 //$jsonX = SXN_GENERAL_COLUMN_ID;
@@ -48,7 +48,7 @@ if(isset($_GET['date2']))
 //$tStart = date('Y-m-d', strtotime($startDate));
 //$tEnd   = date('Y-m-d', strtotime($endDate));
 
-echo("<h1>SXNDATA 2015-12-30</h1>");
+echo("<h1>SXNDATA 2016-01-04</h1>");
 echo("Start Date: $startDate  End Date: $endDate<br>");
 $do = (isset($_GET['do']) ? $_GET['do'] : null);
 
@@ -414,10 +414,14 @@ function zoomed() {
 //    //echo("$temp,");
 //}
 //}
-   readDataTypes(); 
+
+   system("ls *.ip > ipList.work");
+   lib_listIpFiles("ipList.work");
+
+   lib_readDataTypes(); 
    $g_dbM1->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS, "");
-   $numRes = $g_dbM1->retrieveNumberOfResults();
-   echo("<br>Number of SIDs: $numRes<br>");
+   //$numRes = $g_dbM1->retrieveNumberOfResults();
+   //echo("<br>Number of SIDs: $numRes<br>");
    echo("<table border=\"1\">");
      echo("<tr>");
      echo("<td>SID</td> ");
@@ -461,8 +465,7 @@ function zoomed() {
      echo("</tr>");
    }
    echo("</table>");
-   system("ls *.ip > ipList.work");
-   lib_listIpFiles("ipList.work");
+
    
 ?>
 

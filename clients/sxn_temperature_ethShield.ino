@@ -1,5 +1,5 @@
 //==================================================
-// sxn_temperature_standalone.ino
+// sxn_temperature_ethShield.ino
 //==================================================
 // History
 //==================================================
@@ -8,7 +8,7 @@
 // 2015-12-28: Added name and ip in url
 //==================================================
 #define NFLOAT 2  // No of decimals i float value
-#define SIDN  3   // No of SIDs
+#define SIDN  4   // No of SIDs
 #define SID1 901  // Temp 1 and Control SID
 #define SID2 902  // Temp 2
 #define SID3 903  // Temp 3

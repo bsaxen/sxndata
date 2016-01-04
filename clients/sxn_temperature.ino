@@ -7,10 +7,6 @@
 // 2015-12-15   Improved sending to RPi
 // 2015-12-18: increased stepper resolution, corrected NB_sendToGateway
 //==================================================
-// SWID application,version
-//==================================================
-#define SWID 11001
-#define DEVID 9999
 #define NFLOAT 2  // No of decimals i float value
 #define SIDN 4    // No of SIDs
 #define SID1 901  
@@ -164,16 +160,16 @@ if(g_debug==1){Serial.print("part2:");Serial.println(part2);}
        if(negative == 0)
        {
          if(part2 < 10)
-           sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.0%d",DEVID,SWID,part1,part2);
+           sprintf(msg2,"&dat1=%d.0%d",part1,part2);
          else 
-           sprintf(msg2,"&devid=%d&swid=%d&dat1=%d.%d",DEVID,SWID,part1,part2);
+           sprintf(msg2,"&dat1=%d.%d",part1,part2);
        }
        if(negative == 1)
        {
          if(part2 < 10)
-           sprintf(msg2,"&devid=%d&swid=%d&dat1=-%d.0%d",DEVID,SWID,part1,part2);
+           sprintf(msg2,"&dat1=-%d.0%d",part1,part2);
          else 
-           sprintf(msg2,"&devid=%d&swid=%d&dat1=-%d.%d",DEVID,SWID,part1,part2);
+           sprintf(msg2,"&dat1=-%d.%d",part1,part2);
        }
        strcat(msg1,msg2);
      }

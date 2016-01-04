@@ -90,8 +90,10 @@ class DataCollector
 
 }
 
-
-function getControlMessage($sid) {
+//=======================================
+function getControlMessage($sid) 
+//=======================================
+{
  
 	$dbM = new DataManager   (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_CONTROL);
 	$dbM->selectAllFromTable(SXN_CONTROL_TABLE_COMMANDS,
@@ -116,10 +118,10 @@ function getControlMessage($sid) {
 	}
 }
 //=======================================
-function setClientStatus($name,$ip)
+function setClientStatus($sid,$name,$ip)
 //======================================= 
 {
-   $filename = $name.'.ip';
+   $filename = $name.$sid.'.ip';
    $now  = date("Y-m-d H:i:s"); 
    $cont = $ip.' '.$now;
    if (file_exists($filename))
@@ -146,10 +148,12 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 	//Data from request
 	$mid   = $_GET["mid"];
     $nsid  = $_GET["nsid"];
+    
+    $name  = "noName";
+    $ip    = "noIp";
     $name  = $_GET["name"];
     $ip    = $_GET["ip"];
     
-   if($name)setClientStatus($name,$ip);
 
    if($nsid > 9 || $nsid < 1) die;
 
@@ -186,11 +190,15 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 							 SXN_ADMIN_STREAMS_COLUMN_SID."=".$sid); 
   
 	   $numRes = $dbM->retrieveNumberOfResults();
+ 
 	   if($numRes == 1)
 	   {
-   
-		  if ($data = $dbM->retrieveResult())
-		  {
+          while($data = $dbM->retrieveResult())
+          {
+             $tag = $data[SXN_ADMIN_STREAMS_COLUMN_TAG];
+             if($tag) $name = $tag;
+             setClientStatus($sid,$name,$ip);
+              
 			 if($mid == SXN_DATA)
 			 {
                   //echo SXN_USER, SXN_PASSWORD, \"localhost\", SXN_DATABASE_COLLECTOR)";
@@ -206,6 +214,11 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
              {
                  $value = lib_getLatestValue($sid);
                  echo("$sid $value LATEST");
+             }
+             if($mid == SXN_DERLATEST)
+             {
+                 $value = lib_getLatestDerivative($sid);
+                 echo("$sid ,$value, DERLATEST");
              }
              if($mid == SXN_MAILBOX)
              { 

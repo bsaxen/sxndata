@@ -1,8 +1,16 @@
+//====================================================
+// screen.c
+//====================================================
+// History
+// 2015-12-31: First version
+// 2015-01-02: 
+//====================================================
 #include <stdlib.h>
 #include <sys/ioctl.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[31m"
@@ -25,13 +33,45 @@
 struct winsize w;
 int g_rows;
 int g_cols;
+int g_iter = 0;
 char dmx[200][200];
 int  cmx[200][200];
+float g_fbuff[200];
+int g_ibuff[200];
+int g_imax = 0;
+int g_imin = 999999;
+int g_fmax = 0.;
+int g_fmin = 999999.;
+char g_server[80];
+float g_modMax;
+int g_ndiv=1;
+int g_yscale;
 
+void writeInt(int number,int x, int y, int color);
+void writeFloat(float value,int x, int y, int color);
 void writeString(char text[],int x, int y, int color);
-
-
-char *trim(char *s) {
+void setElement(char c, int i, int j, int color);
+//==========================================
+void initTool() 
+//==========================================
+{
+    int i,j;
+    strcpy(g_server,"78.67.160.17");
+    //strcpy(g_server,"127.0.0.1");
+    for(j=1;j<=g_rows;j++)
+    {
+       for(i=1;i<=g_cols;i++)
+       {
+          setElement(' ',i,j,C_NORMAL);
+          g_ibuff[i] = 0;
+          g_fbuff[i] = 0.0;
+       }
+    }
+}
+//==========================================
+char *trim(char *s) 
+//==========================================
+{
     char *ptr;
     if (!s)
         return NULL;   // handle NULL string
@@ -41,28 +81,31 @@ char *trim(char *s) {
     ptr[1] = '\0';
     return s;
 }
-
 //==========================================
-void readFile(char filename[])
+void setElement(char c, int i, int j, int color)
+//==========================================
+{
+          dmx[i][j] = c;
+          cmx[i][j] = color;
+}
+//==========================================
+void readFile(int x, int y, char filename[],int color)
 //==========================================
 {
        FILE * fp;
        char * line = NULL;
        size_t len = 0;
        ssize_t read;
-       int x=g_rows;
+       int k=g_rows-x;
 
        fp = fopen(filename, "r");
        if (fp == NULL)
            return;
      
        while ((read = getline(&line, &len, fp)) != -1) {
-           //printf("Retrieved line of length %zu :\n", read);
-           //printf("%s", line);
            line = trim(line);
-           x--;
-           //if(read > g_cols) line[g_cols] = '\0';
-           writeString(line,3,x,C_BLUE);
+           k--;
+           writeString(line,k,y,color);
        }
 
        fclose(fp);
@@ -71,14 +114,48 @@ void readFile(char filename[])
        return;
 }
 //==========================================
-void display()
+float readLatestSidValue(int sid)
+//==========================================
+{
+       FILE * fp;
+       char sys[240];
+       char * line = NULL;
+       size_t len = 0;
+       ssize_t read;
+       int tsid;
+       float value;
+
+       sprintf(sys,"wget -q -O server_response.txt \"http://%s/sxndata/index.php?mid=2&nsid=1&sid1=%d\"",g_server,sid); 
+       //printf("%s",sys);
+       system(sys);
+
+       fp = fopen("server_response.txt", "r");
+       if (fp == NULL)
+           return;
+     
+       while ((read = getline(&line, &len, fp)) != -1) 
+       {
+           line = trim(line);
+           sscanf(line,"%d %f",&tsid,&value);
+       }
+
+       fclose(fp);
+       system("rm -f server_response.txt");
+    
+       if (line)
+           free(line);
+       return(value);
+}
+//==========================================
+void display(int mode)
 //==========================================
 {
   int i,j,color;
+  system("clear");
   for(j=g_rows;j>0;j--)
   {
-    printf("%s%2d",KYEL,j);
-    for(i=1;i<=g_cols-2;i++)
+    if(mode == 1)printf("%s%2d",KYEL,j);
+    for(i=1;i<=g_cols;i++)
     {
           color = cmx[i][j];
           if(color == C_NORMAL) printf("%s%c",KNRM,dmx[i][j]);
@@ -90,9 +167,31 @@ void display()
           if(color == C_CYAN)   printf("%s%c",KCYN,dmx[i][j]);
           if(color == C_WHITE)  printf("%s%c",KWHT,dmx[i][j]);
           printf("%s",KNRM);
+          cmx[i][j] = 0;
+          dmx[i][j] = ' ';
     }
     printf("\n");
   }
+}
+//==========================================
+void writeInt(int number,int x, int y, int color)
+//==========================================
+{
+    int i,k=0;
+    char text[20];
+   
+    sprintf(text,"%d",number);
+    writeString(text,x,y,color);
+}
+//==========================================
+void writeFloat(float value,int x, int y, int color)
+//==========================================
+{
+    int i,k=0;
+    char text[20];
+   
+    sprintf(text,"%f",value);
+    writeString(text,x,y,color);
 }
 //==========================================
 void writeString(char text[],int x, int y, int color)
@@ -109,61 +208,138 @@ void writeString(char text[],int x, int y, int color)
     }
 }
 //==========================================
-int main()
+int getRowNumber(float fmax,float value)
+// Returns row for specific value
 //==========================================
 {
-    int i,j,x=0,y=0,sid=5;
-    char ch,sys[240];
+    int res = (int)(value/fmax*g_rows);
+    return(res);
+}
+//==========================================
+float getRowValue(float fmax,int row)
+// Returns value for specific row
+//==========================================
+{
+    int res = (int)(row/g_rows*fmax);
+    return(res);
+}
+//==========================================
+float getDivision(float fmax)
+// Returns row for specific value
+//==========================================
+{
+    int ii = g_rows/5;
+    float div = fmax/ii;
     
-    // Init
-    ioctl(0, TIOCGWINSZ, &w);
-    g_rows = w.ws_row;
-    g_cols = w.ws_col;
-    for(j=1;j<=g_rows-1;j++)
+    if(div >=1  && div   <15  ) div =  10;
+    if(div >=15  && div  <25  ) div =  20;
+    if(div >=25  && div  <75  ) div =  50;
+    if(div >=75  && div  <125  ) div =  100;
+    if(div >=125  && div <250  ) div =  200;
+    if(div >=250  && div  <750  ) div =  500;
+    if(div >=750  && div  <1500  ) div =  1000;
+
+    return(div);
+}
+//==========================================
+void histogram(int sid)
+//==========================================
+{
+    int i,j,k=0,temp,height = g_rows - 1;
+    int color=0,div,rscale = 0,rn1,rn2;
+    
+    float fx = readLatestSidValue(sid);
+    // Get max and min value
+    g_fmax = 0.;
+    g_fmin = 999999.;
+    for(i=1;i<=g_cols-5;i++)
     {
-       for(i=1;i<=g_cols-2;i++)
-       {
-          dmx[i][j] = ' ';
-          cmx[i][j] = 0;
-       }
+         g_fbuff[i] = g_fbuff[i+1];
+         if(g_fmin > g_fbuff[i])g_fmin = g_fbuff[i];
+         if(g_fmax < g_fbuff[i])g_fmax = g_fbuff[i];
     }
-
-
-    //printf("lines %d\n", g_rows);
-    //printf("columns %d\n", g_cols);
+    g_fmax = g_fmax*1.1;
+    
+    g_fbuff[g_cols-5] = fx;
+    
+    div = getDivision(g_fmax);
+    
+    k=1;
+    int kindex = div;
+    for(j=1;j<=g_rows;j++)
+    {
+        if(j == getRowNumber(g_fmax,kindex))
+        {
+            writeInt(kindex,1, j, C_BLUE);
+            writeInt(kindex,g_cols-4, j, C_BLUE);
+            k++;
+            kindex = k*div;
+        }
+    }
+    
+    
+    rn1 = getRowNumber(g_fmax,3000.);
+    rn2 = getRowNumber(g_fmax,1000.);
+    //writeFloat(g_fmax,7,g_rows-1, 0);
+    writeFloat(fx,g_cols/2,g_rows, C_RED);
+    g_fmin = 0.0;
+    for(i=1;i<=g_cols-5;i++)
+    {
+         temp = (int)(height*(g_fbuff[i]-g_fmin)/(g_fmax - g_fmin));
+             
+             
+         for(j=1;j<=temp;j++) 
+         {
+ 
+            if (j >= rn1)color = C_YELLOW;
+            else if (j >= rn2)color = C_RED;
+            if (j < rn2)color = C_GREEN;
+            setElement('*',i,j,color);
+         }
+    }
+}
+//==========================================
+int main(int argc, char **argv)
+//==========================================
+{
+    int i,j,x=0,y=0,sid=303,data[200],delay;
+    char ch,sys[240];
+ 
+    if(argc == 1 || argc > 3)
+    {
+      printf("Syntax: ./screen <sid> <delay>\n");
+      exit(0);
+    }
+    if(argc == 2)
+    {
+        sscanf(argv[1],"%d",&sid);
+        delay = 3;
+    }
+    if(argc == 3)
+    {
+       sscanf(argv[1],"%d",&sid);
+       sscanf(argv[2],"%d",&delay);
+    }
+    ioctl(0, TIOCGWINSZ, &w);
+    g_rows = w.ws_row-1;
+    g_cols = w.ws_col-2;
+ 
+    initTool();
+    g_iter = 0;
     while (1)
     {
-      sprintf(sys,"wget -q -O server_response.txt \"http://78.67.160.17/sxndata/index.php?mid=2&nsid=1&sid1=%d\"",sid);
-      //sprintf(sys,"wget -q -O server_response.txt \"http://127.0.0.1/sxndata/index.php?mid=2&nsid=1&sid1=%d&dat1=33.33\"",sid);
-      //printf("%s\n",sys);
-      system(sys);  
-      writeString("Client:",30,20,C_GREEN); 
-      readFile("server_response.txt");
-      display();
-   
-      printf("%s>",KNRM);
-      sleep(5);
-      //ch = getchar();
-      // Cleanup
-      system("rm -f server_response.txt");
-      system("clear");
- 
+      writeInt(sid,7,g_rows, 0); 
+      writeInt(delay,14,g_rows, 0); 
+      histogram(sid);
+      display(0);
+      //printf("%s>>",KNRM);   
 
-        
+      sleep(delay);
+      //ch = getchar();
       if (ch=='q')
 	  {
 	    exit(0);
 	  }
     }
-    /*printf("%sred\n",     KRED);
-    printf("%sgreen\n",   KGRN);
-    printf("%syellow\n",  KYEL);
-    printf("%sblue\n",    KBLU);
-    printf("%smagenta\n", KMAG);
-    printf("%scyan\n",    KCYN);
-    printf("%swhite\n",   KWHT);
-    printf("%snormal\n",  KNRM);*/
-    return 0;
-
-   
+    return 0;  
 }
