@@ -8,6 +8,7 @@
 # History
 #==================================================
 # 2015-12-28: changed defualt name of sxn_name
+# 2016-01-09: Support for global configration server
 #==================================================
 #swid = N/A
 #devid = N/A
@@ -19,9 +20,10 @@ import os
 #==================================================
 # Read configuration
 #==================================================
-print 'Version 2015-12-15'
+print 'Version 2016-01-09'
 sxn_debug = 'YES';
 #sxn_server = '78.67.160.17'
+sxn_sercon = 'config.nabton.com'
 sxn_server = '127.0.0.1'
 sxn_path = '/sxndata/index.php'
 sxn_device = 'ttyACM0'

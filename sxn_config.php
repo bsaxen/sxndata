@@ -974,7 +974,8 @@ if($do == 'init_db')
   addDataType('Electric Power','Watt'); 
   
   addCommandType('SXN_DEVICE_DELAY','Delay(ms) device gwy');   
-  addCommandType('SXN_STEPPER_CTRL','dir step delay');   
+  addCommandType('SXN_STEPPER_CTRL','dir step delay');
+  addCommandType('SXN_SERVER_IP','server ip address');   
     
 //function addSid($sid,$type,$unit,$title,$tag,$description,$owner_uid,$permission) 
   addSid(901,1,1,"sxn test901","test901","SXN Only test901",1,1);    

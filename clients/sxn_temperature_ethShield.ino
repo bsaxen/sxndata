@@ -6,9 +6,11 @@
 // Software Id: 41001 2015-11-21  First version
 // 2015-12-18: increased stepper resolution, corrected NB_sendToGateway
 // 2015-12-28: Added name and ip in url
+// 2016-01-06: Configurable server ip address
+// 2016-01-08: Central configuration
 //==================================================
 #define NFLOAT 2  // No of decimals i float value
-#define SIDN  4   // No of SIDs
+#define NSID  2   // No of SIDs
 #define SID1 901  // Temp 1 and Control SID
 #define SID2 902  // Temp 2
 #define SID3 903  // Temp 3
@@ -17,39 +19,53 @@
 #define SID6 906
 #define SID7 907
 #define SID8 908
-int g_debug = 0;
-const char* g_clientName = "ArduinoEthShield";
+int g_debug = 1;
+const char* g_clientName = "ArduinoEthShield-test";
 int g_device_delay = 3;
 //==================================================
 #define MAX_SID 8
 //#define MAX_ORDERS 100
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-char server[] = "192.168.1.97";  
-int g_sids[10] = {SIDN,SID1,SID2,SID3,SID4,SID5,SID6,SID7,SID8};
+//char g_confServer[] = "192.168.1.97"; 
+char g_confServer[80] ; 
+char g_server[80]; 
+int  g_sids[10] = {NSID,SID1,SID2,SID3,SID4,SID5,SID6,SID7,SID8};
 char g_sIp[80];
-
+char g_rbuf[4000];
+int g_device_state = 0;
+  
 // Arduino-RPi protocol
 #define NABTON_DATA     1 
 #define NABTON_LATEST   2 
 #define NABTON_MAILBOX  3 
 
-#define LED_INTERNET 30 
+#define LED_INTERNET  2
+#define LED_REC_DATA  3
+#define LED_SEND_DATA  5
+#define LED_DEVICE_STATUS 12
+#define LED_CONFIGURED 13
+
+#define S_STARTED    1
+#define S_NO_NETWORK 2
+#define S_NETWORK    3
+#define S_INTERNET   4
+#define S_CONFIGURED 5
 //=================================================
 //
 // D0 RX used for serial communication to server (Raspberry Pi)
 // D1 TX used for serial communication to server (Raspberry Pi)
-// D2
-// D3 Status Pin - Serial data received
+// D2 LED Internet
+// D3 LED - Serial data received
 // D4 IR Data
-// D5 Status Pin - Serial data sent
+// D5 LED - Serial data sent
 // D6 DIR Stepper
 // D7 STEP Stepper
 // D8 SLEEP Stepper
 // D9 One Wire Data
 // D10  RX Bluetooth device
 // D11  TX Bluetooth device
-// D12 
-// D13
+// D12  LED Device status
+// D13  LED Device Configured
 //
 // A0
 // A1
@@ -61,7 +77,7 @@ char g_sIp[80];
 // MEGA
 // D20 SDA I2C OLED
 // D21 SCL I2C OLED
-// D30 Internet connection status
+// 
 //=================================================
 #include <stdio.h>
 #include <SPI.h>
@@ -75,7 +91,8 @@ char g_sIp[80];
 //=================================================
 // Ethernet
 //=================================================
-IPAddress ip(192, 168, 1, 97);
+IPAddress ip(192, 168, 1, 131); // If no DHCP
+//IPAddress ip;
 IPAddress ipAddress;
 EthernetClient client;
 //=================================================
@@ -96,6 +113,20 @@ int nsensors = 0;
 //U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE); // Small display I2C protocol (2 pins)
 U8GLIB_SH1106_128X64 u8g(U8G_I2C_OPT_NONE); // Large display
 char dl[8][8],dm[8][8],dr[8][8];
+//=================================================
+void software_Reset() // Restarts program from beginning but does not reset the peripherals and registers
+//=================================================
+{
+asm volatile ("  jmp 0");  
+}  
+
+//=================================================
+void setState(int st) 
+//=================================================
+{
+ g_device_state = st;
+ if(g_debug == 1)Serial.print("Device State = ");Serial.println(st);
+}
 //=================================================
 void NB_oledDraw() 
 //=================================================
@@ -139,6 +170,19 @@ void draw()
 
 }
 //=================================================
+void blinkLed(int led,int number, int onTime)
+//================================================= 
+{
+  int i;
+  for(i=0;i<number;i++)
+  {
+    digitalWrite(led,HIGH);
+    delay(onTime);
+    digitalWrite(led,LOW);
+    delay(onTime);
+  }
+}
+//=================================================
 void NB_serialFlush()
 //=================================================
 {
@@ -154,12 +198,12 @@ void NB_serialFlush()
 int NB_sendToGwy(int mid, int sid, float data, int other)
 //=================================================
 {
- Serial.print("sid=");Serial.println(sid);
+  //Serial.print("sid=");Serial.println(sid);
   int ixSid = 0,i,negative=0;
   char msg1[100],msg2[50],checksum[20];
      strcpy(msg1," ");
      strcpy(msg2," ");
-     digitalWrite(5,HIGH);
+     digitalWrite(LED_SEND_DATA,HIGH);
      // Mandatory part of message
      sprintf(msg1,"GET /sxndata/index.php?mid=%d&nsid=%d&sid1=%d",mid,1,sid);
 if(g_debug==1){Serial.print("data:");Serial.println(data);}      
@@ -198,18 +242,19 @@ if(g_debug==1){Serial.print("part2:");Serial.println(part2);}
        strcat(msg1,msg2);
      }
 
+    digitalWrite(LED_INTERNET,LOW);
     client.stop();
-    if(client.connect(server, 80))
+    if(client.connect(g_server, 80))
      {
        digitalWrite(LED_INTERNET,HIGH);
-       Serial.print("msg1=");Serial.println(msg1);
+       if(g_debug==1){Serial.print("msg1=");Serial.println(msg1);}
        client.println(msg1);
-       client.println("Host: 127.0.0.1");
+       //client.println("Host: config.nabton.com");
        client.println("Connection: close");
        client.println();
      }
- 
-     digitalWrite(5,LOW);
+
+     digitalWrite(LED_SEND_DATA,LOW);
      return(other);
 }
 //=================================================
@@ -232,11 +277,32 @@ void setup()
   int i;
   float tempC;  
   String str;
+  char c,stemp[40],msg[100];
+
+ 
+  // disable SD SPI
+  pinMode(4, OUTPUT);
+  digitalWrite(4, HIGH);
+
+  strcpy(g_confServer,"config.nabton.com");
+  //strcpy(g_confServer,"192.168.1.97");
+  
   Serial.begin(9600);
   //NB_serialFlush();
-  pinMode(3, OUTPUT);
-  pinMode(5, OUTPUT);
-  pinMode(LED_INTERNET, OUTPUT);
+
+  pinMode(LED_INTERNET,      OUTPUT);
+  pinMode(LED_REC_DATA,      OUTPUT);
+  pinMode(LED_SEND_DATA,     OUTPUT);
+  pinMode(LED_DEVICE_STATUS, OUTPUT);
+  pinMode(LED_CONFIGURED,    OUTPUT);
+
+  blinkLed(LED_DEVICE_STATUS,1,100);
+  blinkLed(LED_CONFIGURED,   1,100);
+  blinkLed(LED_INTERNET,     1,100);
+  blinkLed(LED_SEND_DATA,    1,100);
+  blinkLed(LED_REC_DATA,     1,100);
+  
+  setState(S_STARTED);
   // OLED
 //=================================================
 
@@ -274,18 +340,9 @@ void setup()
       str = String(tempC);
       str.toCharArray(dl[i+1],8); 
   }
-  g_sids[1] = SID1;
-  g_sids[2] = SID2;
-  g_sids[3] = SID3;
-  g_sids[4] = SID4;
-  g_sids[5] = SID5;
-  g_sids[6] = SID6;
-  g_sids[7] = SID7;
-  g_sids[8] = SID8;
-  
 
   sprintf(dr[1],"%d",g_device_delay);
-  for(i=1;i<=SIDN;i++)
+  for(i=1;i<=NSID;i++)
   {
     sprintf(dr[i+1],"%d",g_sids[i]);
   }
@@ -297,6 +354,7 @@ void setup()
     // no point in carrying on, so do nothing forevermore:
     // try to congifure using IP address instead of DHCP:
     Ethernet.begin(mac, ip);
+    setState(S_NO_NETWORK);
   }
     
   Serial.print("Local address: ");
@@ -305,55 +363,114 @@ void setup()
   Serial.println(ipAddress);
   sprintf(dm[1],"?");
   NB_oledDraw();
-
+  digitalWrite(LED_DEVICE_STATUS,HIGH);
+  setState(S_NETWORK);
   delay(1000);
 
 
-  while (!client.connected()) {
-        client.connect(server, 80);
-        delay(300);
-        sprintf(dm[1],"*");
-        NB_oledDraw();
-        sprintf(dm[1],".");
-        delay(300);
-        NB_oledDraw();
-  }
-  sprintf(dm[1],"ok");
-  NB_oledDraw();
-
-}
+while (g_device_state != S_CONFIGURED)
+{
+// ====== Get global configuration data ========
+     digitalWrite(LED_CONFIGURED,LOW);
+     Serial.print("URL for config: ");Serial.println(g_confServer);
+     int res = client.connect(g_confServer, 80);
+     Serial.print("URL connect: ");Serial.println(res);
+    if(res == 1)
+     {
+       setState(S_INTERNET);
+       digitalWrite(LED_INTERNET,HIGH);
+       //sprintf(msg,"GET /index.php?nsid=%d&sid1=%d",NSID,SID1);
+       //if(g_debug==1){Serial.print("msg=");Serial.println(msg);}
+       client.println("GET http://config.nabton.com/sercon.html");
+       //client.println("GET /nabton/nabtonServer/sercon.html");
+       client.println("Host: config.nabton.com");
+       client.println("Connection: close");
+       client.println();
+       //digitalWrite(LED_INTERNET,LOW);      
+     }
+ 
+      delay(2000);  
+      
+      int nbytes = client.available();
+      //Serial.print(nbytes); 
+      int count = 0;
+      
+      for(i=0;i<nbytes;i++) 
+      {
+         c = client.read();
+         //Serial.print(c);
+         g_rbuf[count] = c;
+         count++;
+      }
+      g_rbuf[count] = '\0';
+      Serial.print("-"); 
+      Serial.print(g_rbuf);
+      Serial.println("*"); 
+      if(strstr(g_rbuf,"SERCON") != NULL)
+      {
+        sscanf(g_rbuf,"%s %s %d",stemp,g_server,&g_device_delay);
+        blinkLed(LED_CONFIGURED,nbytes,100);
+        setState(S_CONFIGURED);
+        digitalWrite(LED_CONFIGURED,HIGH);
+      }
+      client.stop();
   
+      strcpy(g_rbuf," ");
+// ====== End global configuration data ========
+} // end while
+
+     
+  sprintf(dm[1],"CO");
+  NB_oledDraw();
+  digitalWrite(LED_DEVICE_STATUS,LOW);
+  delay(1000);
+}
 //=================================================
 void loop()
 //=================================================
 {
-    int j,nbytes,count;
+    int i,j,nbytes,count;
     float tempC;
     char c='1';
+    char *p;
+    char *str;
 
+    digitalWrite(LED_DEVICE_STATUS,HIGH);
     sensors.requestTemperatures();
    
     for(j=0;j<nsensors;j++)
     {
+      //blinkLed(LED_REC_DATA,1,100);
       tempC = sensors.getTempCByIndex(j);
       dtostrf(tempC,5, NFLOAT, dl[2+j]);
-      if(tempC != -127)j= NB_sendToGwy(NABTON_DATA,g_sids[j+1],tempC,j);
-      
-      delay(g_device_delay*1000);  
-      
+      if(tempC != -127)j= NB_sendToGwy(NABTON_DATA,g_sids[j+1],tempC,j);   
+      delay(2000); // wait for HTTP response  
       nbytes = client.available();
-      Serial.print(nbytes); 
+      //Serial.print(nbytes); 
       count = 0;
       
-      while (nbytes != 0 && c != -1) 
+      for(i=0;i<nbytes;i++) 
       {
-         count++;
          c = client.read();
-         Serial.print(c);
+         //Serial.print(c);
+         g_rbuf[count] = c;
+         count++;
       }
-      Serial.println(count); 
-      c = '1';
+      g_rbuf[count] = '\0';
+      Serial.print("-"); 
+      Serial.print(g_rbuf);
+      Serial.println("*"); 
+      if(strstr(g_rbuf,"DATA") != NULL) blinkLed(LED_REC_DATA,nbytes,20);
+      if(strstr(g_rbuf,"CONFIG") != NULL)
+      {
+        blinkLed(LED_CONFIGURED,5,500);
+        software_Reset();
+      }
+      strcpy(g_rbuf," ");
+      //c = '1';
       NB_oledDraw();
+      delay(g_device_delay*1000);  
     }
+    digitalWrite(LED_DEVICE_STATUS,LOW);
 }
 
