@@ -6,14 +6,15 @@
 // Software Id: 11201 2015-11-21	First version
 // 2015-12-09: support sidApp controlSaxenHeater
 // 2015-12-18: increased stepper resolution, corrected NB_sendToGateway
+// 2016-01-10: Correction of receiving serial for stepper
 //==================================================
 #define SWID 2015
-#define DEVID 1218 
+#define DEVID 0110 
 #define SIDN  4   // No of SIDs
-#define SID1 901  
-#define SID2 902  
-#define SID3 903 
-#define SID4 904 
+#define SID1 1  
+#define SID2 2  
+#define SID3 3 
+#define SID4 4 
 #define SID5 905  
 #define SID6 906
 #define SID7 907
@@ -31,8 +32,6 @@ int g_sids[10] = {SIDN,SID1,SID2,SID3,SID4,SID5,SID6,SID7,SID8};
 
 // Arduino-RPi protocol
 #define NABTON_DATA     1 
-#define NABTON_LATEST   2 
-#define NABTON_MAILBOX  3 
 // Arduino Control Protocol
 #define ON_STEPPER_DIR   4
 #define ON_STEPPER_STEPS 5
@@ -244,28 +243,35 @@ void recSerial()
   char nbbuff[50],msg[5][100],command[48],stemp[100];
   int mid, sid;
   int dir,steps,vel;
-  
+  char rv[20];
+ 
   if (nx > 0) 
   {
      digitalWrite(3, HIGH); 
      Serial.readBytes(nbbuff,nx);
      sscanf(nbbuff,"%d",&sid);
+ 
      if(sid == SID1) // Check if control sid correct
      {
+       strcpy(dr[3],"---");
+       strcpy(dr[4],"ok?");
        if(strstr(nbbuff,"NBC_DEVICE_DELAY") != NULL)
        {
           strcpy(dr[3],"DLY");
-          sscanf(nbbuff,"%d %s %d",&sid,command,&g_device_delay);
-          sprintf(dr[3],"%d",g_device_delay);
+          sscanf(nbbuff,"%d %s %s %d",&sid,rv,command,&g_device_delay);
+          if(g_device_delay < 1)g_device_delay = 1;
+          if(g_device_delay > 3600)g_device_delay = 3600;
+          sprintf(dr[1],"%d",g_device_delay);
        }
        if(strstr(nbbuff,"NBC_STEPPER_CTRL") != NULL)
        {
           strcpy(dr[3],"SCL");
-          sscanf(nbbuff,"%d %s %d %d %d",&sid,command,&dir,&steps,&vel);
+          sscanf(nbbuff,"%d %s %s %d %d %d",&sid,rv,command,&dir,&steps,&vel);
+          sprintf(dr[2],"%d",dir);
           if(dir==1)strcpy(dr[4],"STP>");
           if(dir==2)strcpy(dr[4],"STP<"); 
-          if(dir==1)strcpy(dr[1],"hi");
-          if(dir==2)strcpy(dr[1],"low<");   
+          //if(dir==1)strcpy(dr[1],"hi");
+          //if(dir==2)strcpy(dr[1],"low<");   
           NB_oledDraw();        
           if(steps > 0 || steps < 1000)
           {
@@ -273,11 +279,15 @@ void recSerial()
              if(dir == 2) stepCCW(steps,vel);
           }
        }
-       strcpy(dr[4],"-");
+       strcpy(dr[4],"ok!");
        NB_oledDraw();
      }
      digitalWrite(3, LOW); 
   }
+  else
+    strcpy(dr[4],"nok");
+
+  NB_oledDraw();
 }
 
 //=================================================
@@ -356,9 +366,9 @@ void setup()
   g_sids[7] = SID7;
   g_sids[8] = SID8;
 
-  //sprintf(dr[1],"%d",SWID);
-  sprintf(dr[2],"%d",DEVID);
-  sprintf(dr[3],"%d",g_device_delay);
+  sprintf(dr[1],"%d",g_device_delay);
+  //sprintf(dr[2],"");
+  //sprintf(dr[3],"");
   for(i=1;i<=SIDN;i++)
   {
     sprintf(dm[i],"%d",g_sids[i]);

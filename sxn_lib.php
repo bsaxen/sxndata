@@ -310,7 +310,7 @@ function executeSidFunction($sid)
   // check if any sid function is set active in database
     $sFunc = 'void';
     //$sfunc = checkSidFunction($sid);
-    if($sid == 901)$sFunc = 'controlSaxenHeater'; // TBD read this from database
+    //if($sid == 999)$sFunc = 'controlSaxenHeater'; // TBD read this from database
     //echo("ecexute $sFunc<br>");
     if($sFunc != 'void')call_user_func(array($sFunc,'doIt'));   
       //if($sFunc != 'void')call_user_func(array($sFunc));   

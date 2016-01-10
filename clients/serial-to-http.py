@@ -22,9 +22,9 @@ import os
 #==================================================
 print 'Version 2016-01-09'
 sxn_debug = 'YES';
-#sxn_server = '78.67.160.17'
+sxn_server = '78.67.160.17'
 sxn_sercon = 'config.nabton.com'
-sxn_server = '127.0.0.1'
+#sxn_server = '127.0.0.1'
 sxn_path = '/sxndata/index.php'
 sxn_device = 'ttyACM0'
 sxn_ipaddress = 'x.x.x.x'
