@@ -1,5 +1,8 @@
-
 <?php
+//==================================================
+// sxn_presentation.php
+// 2016-02-07
+//==================================================
 session_start(); 
 
 //require_once('sxn_definition.php');
@@ -11,7 +14,7 @@ require_once('sxn_lib.php');
 $startDate    = $_SESSION['startDate'];
 $endDate      = $_SESSION['endDate'];
 
-if(!startDate)
+if(!$startDate)
 {
      $startDate = date("Y-m-d");
      $endDate   = date("Y-m-d");
