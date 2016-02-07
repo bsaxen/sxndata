@@ -9,8 +9,6 @@ session_start();
 require_once('sxn_sql_lib.php');
 require_once('sxn_lib.php');
 
-
-
 $startDate    = $_SESSION['startDate'];
 $endDate      = $_SESSION['endDate'];
 
@@ -51,7 +49,7 @@ if(isset($_GET['date2']))
 //$tStart = date('Y-m-d', strtotime($startDate));
 //$tEnd   = date('Y-m-d', strtotime($endDate));
 
-echo("<h1>SXNDATA 2016-01-04</h1>");
+echo("<h1>SXNDATA 2016-02-07</h1>");
 echo("Start Date: $startDate  End Date: $endDate<br>");
 $do = (isset($_GET['do']) ? $_GET['do'] : null);
 
@@ -418,6 +416,27 @@ function zoomed() {
 //}
 //}
 
+    // Special for me
+   $waterIn_sid     = 3;// 3
+   $waterOut_sid    = 1;// 1
+   $waterOut    = lib_getLatestValue($waterOut_sid);
+   if($waterOut == SXN_NO_VALUE)
+   {
+        lib_log("CSH","No value for WaterOut\n");
+        lib_log("CSH","-----End-----\n"); 
+        //return;
+   }
+    $waterIn    = lib_getLatestValue($waterIn_sid);
+   if($waterIn == SXN_NO_VALUE)
+   {
+        lib_log("CSH","No value for WaterIn\n");
+        lib_log("CSH","-----End-----\n"); 
+        //return;
+   }
+    $tdelta = $waterOut-$waterIn;
+    echo("$waterOut $waterIn delta=$tdelta<br>");
+    
+    
    system("ls *.ip > ipList.work");
    lib_listIpFiles("ipList.work");
 
