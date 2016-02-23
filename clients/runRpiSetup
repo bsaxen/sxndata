@@ -1,2 +1,48 @@
+#!/bin/sh
+#=============================
+# install packages
+#=============================
 sudo apt-get update
 sudo apt-get upgrade
+sudo apt-get install vim
+sudo apt-get install apache2
+sudo apt-get install php5
+sudo apt-get install zip
+sudo apt-get install xrdp
+sudo apt-get install git-core
+#=============================
+# change password
+#=============================
+#=============================
+# set static ip address
+#=============================
+/etc/network/interfaces
+#=============================
+# set system time
+#=============================
+#=============================
+# expand memory
+#=============================
+#=============================
+# keyboard settings
+#=============================
+#=============================
+# rename device
+#=============================
+/etc/hostname
+sed '/WORD/ c\Replace the current line with the line'
+#=============================
+# install pyserial
+#=============================
+sudo apt-get install python-pip
+sudo pip install pyserial
+#=============================
+# autostart applications
+#=============================
+/etc/rc.local
+#=============================
+# vim settings
+#=============================
+:syntax on
+:set number
+.vimrc
