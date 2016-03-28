@@ -3,9 +3,10 @@
 //==================================================
 // History
 //==================================================
-// 2015-11-21	First version
-// 2015-12-15   Improved sending to RPi
-// 2015-12-18: increased stepper resolution, corrected NB_sendToGateway
+// 2015-11-21: First version
+// 2015-12-15: Improved sending to RPi
+// 2015-12-18: Increased stepper resolution, corrected NB_sendToGateway
+// 2016-03-28: Generic number of sensors. Scrolling display of data
 //==================================================
 #define NFLOAT 2  // No of decimals i float value
 #define SIDN 4    // No of SIDs
