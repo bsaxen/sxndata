@@ -106,7 +106,7 @@ function getControlMessage($sid)
 	{
 		while($data = $dbM->retrieveResult())
 		{
-		    echo $data[SXN_CONTROL_COMMANDS_COLUMN_COMMAND]."\n";
+		    echo ":".$data[SXN_CONTROL_COMMANDS_COLUMN_COMMAND]."\n";
 		}
 
 		//Update status to "executed"
