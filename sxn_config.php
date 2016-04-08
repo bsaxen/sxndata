@@ -971,15 +971,15 @@ if($do == 'init_db')
   addUser('admin','amazon',1);  
   addUser('benny','amazon',2);
   addUser('berndt','vedkap',2);
-  addUser('micke','lidback',2);
+  addUser('adam','amazon',1);
    
   addDataType('Temperature','Celcius');
   addDataType('Body Weight','Kilogram');
   addDataType('Electric Power','Watt'); 
   
-  addCommandType('SXN_DEVICE_DELAY','Delay(ms) device gwy');   
-  addCommandType('SXN_STEPPER_CTRL','dir step delay');
-  addCommandType('SXN_SERVER_IP','server ip address');   
+  addCommandType('DELAY','Delay(ms) device gwy');   
+  addCommandType('STEPPER','dir step delay');
+  addCommandType('CONFIG','server ip address');   
     
 //function addSid($sid,$type,$unit,$title,$tag,$description,$owner_uid,$permission) 
   addSid(901,1,1,"sxn test901","test901","SXN Only test901",1,1);    
