@@ -121,7 +121,11 @@ function getControlMessage($sid)
 function setClientStatus($sid,$name,$ip,$appid)
 //======================================= 
 {
-   	$filename = $name.$sid.'.ip';
+   	if($sid > 0)
+   		$filename = $name.$sid.'.ip';
+   	else
+   		$filename = $name.'Beacon.ip';
+   		
    	$now  = date("Y-m-d H:i:s");
    	if(!$appid)$appid = "No_App_Id";
    	$cont = $appid.' '.$ip.' '.$now;
@@ -143,17 +147,21 @@ function setClientStatus($sid,$name,$ip,$appid)
 // Main program
 //==============================================================================
 
-if(isset($_GET['mid']) && isset($_GET['nsid']))
+if(isset($_GET['mid']))
 {
 	//Data from request
     	$mid   = $_GET["mid"];
-    	$nsid  = $_GET["nsid"];
-    
     	$name  = "noName";
     	$ip    = "noIp";
     	$name  = $_GET["name"];
     	$ip    = $_GET["ip"];
     	$appid = $_GET["appid"];
+    	
+    	if($mid == SXN_BEACON)
+    	{
+    		setClientStatus(0,$name,$ip,$appid);	
+    	}
+    	$nsid  = $_GET["nsid"];
 
    	if($nsid > 9 || $nsid < 1) die;
 
@@ -197,7 +205,7 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 				if($mid == SXN_DATA)
 				{
                    			$tag = $data[SXN_ADMIN_STREAMS_COLUMN_TAG];
-                   			if($tag) $name = $tag;
+                   			//if($tag) $name = $tag;
                    			setClientStatus($sid,$name,$ip,$appid);
                   			//echo SXN_USER, SXN_PASSWORD, \"localhost\", SXN_DATABASE_COLLECTOR)";
 		   			$dbC = new DataCollector (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_COLLECTOR);
@@ -231,6 +239,7 @@ if(isset($_GET['mid']) && isset($_GET['nsid']))
 else
 {
 	if(DEBUG_MODE == 'on')echo "- Not a valid request, die \n";
+	echo date("Y-m-d H:i:s");
 	die();
 }
 
