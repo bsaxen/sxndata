@@ -121,6 +121,9 @@ function getControlMessage($sid)
 function setClientStatus($sid,$name,$ip,$appid)
 //======================================= 
 {
+	if(!$name) $name = "noName";
+	if(!$ip) $ip = "noIp";
+	if(!$appid) $appid = "noAppid";
    	if($sid > 0)
    		$filename = $name.$sid.'.ip';
    	else
@@ -151,17 +154,16 @@ if(isset($_GET['mid']))
 {
 	//Data from request
     	$mid   = $_GET["mid"];
-    	$name  = "noName";
-    	$ip    = "noIp";
     	$name  = $_GET["name"];
     	$ip    = $_GET["ip"];
     	$appid = $_GET["appid"];
     	
     	if($mid == SXN_BEACON)
     	{
-    		setClientStatus(0,$name,$ip,$appid);	
+    		setClientStatus(0,$name,$ip,$appid);
+    		die();
     	}
-    	$nsid  = $_GET["nsid"];
+    	$nsid = $_GET["nsid"];
 
    	if($nsid > 9 || $nsid < 1) die;
 
@@ -193,8 +195,7 @@ if(isset($_GET['mid']))
 	   	$sid = $msid[$ii];
            	$dd  = $dat[$ii];
 	   	$dbM = new DataManager   (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_ADMIN);
-	   	$dbM->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS,
-							 SXN_ADMIN_STREAMS_COLUMN_SID."=".$sid); 
+	   	$dbM->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS,SXN_ADMIN_STREAMS_COLUMN_SID."=".$sid); 
   
 	   	$numRes = $dbM->retrieveNumberOfResults();
  
