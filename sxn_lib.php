@@ -28,7 +28,7 @@ function lib_listFileContent($filename)
     { 
         while (($line = fgets($handle)) !== false) 
         {
-          sscanf($line,"%s %s %s",$ip,$yymmdd,$hhmmss);
+          sscanf($line,"%s %s %s %s",$appid,$ip,$yymmdd,$hhmmss);
           $stemp = $yymmdd.' '. $hhmmss;
           $now = date("Y-m-d H:i:s"); 
           //$stemp = '2015-12-27 12:10:12';
@@ -42,14 +42,14 @@ function lib_listFileContent($filename)
           $nmin    = floor($temp/60); 
           if($nmin >= 0)
           {
-                if($nmin < 60)echo("<p style=\"color:#00CD00\">$filename [$ip] Online($nmin)</p>");
+                if($nmin < 60)echo("<p style=\"color:#00CD00\">$filename [$ip][$appid] Online($nmin)</p>");
                 if($nmin >= 60)
                 {
-                    echo("<p style=\"color:#0099ff\">$filename [$ip]  Offline($days days $hours hours $minutes minutes) $stemp</p>");
+                    echo("<p style=\"color:#0099ff\">$filename [$ip][$appid]  Offline($days days $hours hours $minutes minutes) $stemp</p>");
                 }
           }
           else
-                if($nmin < 0)echo("<p style=\"color:#CD0000\">$filename [$ip] Error($nmin)</p>");
+                if($nmin < 0)echo("<p style=\"color:#CD0000\">$filename [$ip][$appid] Error($nmin)</p>");
             
         }
         fclose($handle);
