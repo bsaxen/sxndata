@@ -121,11 +121,10 @@ function getControlMessage($sid)
 function setClientStatus($sid,$name,$ip,$appid)
 //======================================= 
 {
-	echo("name=$name:<br>ip=$ip:<br>appid=$appid:<br>");
-	if(!$name) $name = "noName";
-	if(!$ip) $ip = "noIp";
+	if(!$name) $name   = "noName";
+	if(!$ip) $ip       = "noIp";
 	if(!$appid) $appid = "noAppid";
-     	echo("xname=$name:<br>xip=$ip:<br>xappid=$appid:<br>");
+	
    	if($sid > 0)
    		$filename = $name.$sid.'.ip';
    	else
@@ -162,7 +161,6 @@ if(isset($_GET['mid']))
     	if($mid == SXN_BEACON)
     	{
     		setClientStatus(0,$name,$ip,$appid);
-    		echo("name=$name:<br>ip=$ip:<br>appid=$appid:<br>");
     		die();
     	}
     	$nsid = $_GET["nsid"];
@@ -179,19 +177,16 @@ if(isset($_GET['mid']))
    	if($nsid > 7) {$msid[8]  = $_GET["sid8"];}
    	if($nsid > 8) {$msid[9]  = $_GET["sid9"];}
     
-    	if($mid == SXN_DATA)
-    	{
-        	$dat[1]  = $_GET["dat1"];
-        	$dat[2]  = $_GET["dat2"];
-        	$dat[3]  = $_GET["dat3"];
-        	$dat[4]  = $_GET["dat4"];
-        	$dat[5]  = $_GET["dat5"];
-        	$dat[6]  = $_GET["dat6"];
-        	$dat[7]  = $_GET["dat7"];
-        	$dat[8]  = $_GET["dat8"];
-        	$dat[9]  = $_GET["dat9"];
-    	}
-  
+        $dat[1]  = $_GET["dat1"];
+        $dat[2]  = $_GET["dat2"];
+        $dat[3]  = $_GET["dat3"];
+        $dat[4]  = $_GET["dat4"];
+        $dat[5]  = $_GET["dat5"];
+        $dat[6]  = $_GET["dat6"];
+        $dat[7]  = $_GET["dat7"];
+        $dat[8]  = $_GET["dat8"];
+        $dat[9]  = $_GET["dat9"];
+
     	for($ii=1;$ii<=$nsid;$ii++)
     	{
 	   	$sid = $msid[$ii];
