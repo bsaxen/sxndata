@@ -121,6 +121,7 @@ function getControlMessage($sid)
 function setClientStatus($sid,$name,$ip,$appid)
 //======================================= 
 {
+	echo("name=$name<br>ip=$ip<br>appid=$appid<br>")
 	if(!$name) $name = "noName";
 	if(!$ip) $ip = "noIp";
 	if(!$appid) $appid = "noAppid";
@@ -161,6 +162,7 @@ if(isset($_GET['mid']))
     	if($mid == SXN_BEACON)
     	{
     		setClientStatus(0,$name,$ip,$appid);
+    		echo("name=$name<br>ip=$ip<br>appid=$appid<br>")
     		die();
     	}
     	$nsid = $_GET["nsid"];
