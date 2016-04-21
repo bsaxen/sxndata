@@ -118,25 +118,26 @@ function getControlMessage($sid)
 	}
 }
 //=======================================
-function setClientStatus($sid,$name,$ip)
+function setClientStatus($sid,$name,$ip,$appid)
 //======================================= 
 {
-   $filename = $name.$sid.'.ip';
-   $now  = date("Y-m-d H:i:s"); 
-   $cont = $ip.' '.$now;
-   if (file_exists($filename))
-   {
-      $fh = fopen($filename, "w");
-      fwrite($fh, $cont);
-      fclose($fh);
-   }
-    else
-     {
-      $fh = fopen($filename, "w");
-      fwrite($fh, $cont);
-      fclose($fh);
-      chmod($filename,0777);
-     }              
+   	$filename = $name.$sid.'.ip';
+   	$now  = date("Y-m-d H:i:s");
+   	if(!$appid)$appid = "No_App_Id";
+   	$cont = $appid.' '.$ip.' '.$now;
+   	if (file_exists($filename))
+   	{
+      		$fh = fopen($filename, "w");
+      		fwrite($fh, $cont);
+      		fclose($fh);
+   	}
+    	else
+     	{
+      		$fh = fopen($filename, "w");
+      		fwrite($fh, $cont);
+      		fclose($fh);
+      		chmod($filename,0777);
+     	}              
 }
 //==============================================================================
 // Main program
@@ -144,91 +145,88 @@ function setClientStatus($sid,$name,$ip)
 
 if(isset($_GET['mid']) && isset($_GET['nsid']))
 {
-
 	//Data from request
-	$mid   = $_GET["mid"];
-    $nsid  = $_GET["nsid"];
+    	$mid   = $_GET["mid"];
+    	$nsid  = $_GET["nsid"];
     
-    $name  = "noName";
-    $ip    = "noIp";
-    $name  = $_GET["name"];
-    $ip    = $_GET["ip"];
-    
+    	$name  = "noName";
+    	$ip    = "noIp";
+    	$name  = $_GET["name"];
+    	$ip    = $_GET["ip"];
+    	$appid = $_GET["appid"];
 
-   if($nsid > 9 || $nsid < 1) die;
+   	if($nsid > 9 || $nsid < 1) die;
 
-   if($nsid > 0) {$msid[1]  = $_GET["sid1"];}
-   if($nsid > 1) {$msid[2]  = $_GET["sid2"];}
-   if($nsid > 2) {$msid[3]  = $_GET["sid3"];}
-   if($nsid > 3) {$msid[4]  = $_GET["sid4"];}
-   if($nsid > 4) {$msid[5]  = $_GET["sid5"];}
-   if($nsid > 5) {$msid[6]  = $_GET["sid6"];}
-   if($nsid > 6) {$msid[7]  = $_GET["sid7"];}
-   if($nsid > 7) {$msid[8]  = $_GET["sid8"];}
-   if($nsid > 8) {$msid[9]  = $_GET["sid9"];}
+   	if($nsid > 0) {$msid[1]  = $_GET["sid1"];}
+   	if($nsid > 1) {$msid[2]  = $_GET["sid2"];}
+   	if($nsid > 2) {$msid[3]  = $_GET["sid3"];}
+   	if($nsid > 3) {$msid[4]  = $_GET["sid4"];}
+   	if($nsid > 4) {$msid[5]  = $_GET["sid5"];}
+   	if($nsid > 5) {$msid[6]  = $_GET["sid6"];}
+   	if($nsid > 6) {$msid[7]  = $_GET["sid7"];}
+   	if($nsid > 7) {$msid[8]  = $_GET["sid8"];}
+   	if($nsid > 8) {$msid[9]  = $_GET["sid9"];}
     
-    if($mid == SXN_DATA)
-    {
-        $dat[1]  = $_GET["dat1"];
-        $dat[2]  = $_GET["dat2"];
-        $dat[3]  = $_GET["dat3"];
-        $dat[4]  = $_GET["dat4"];
-        $dat[5]  = $_GET["dat5"];
-        $dat[6]  = $_GET["dat6"];
-        $dat[7]  = $_GET["dat7"];
-        $dat[8]  = $_GET["dat8"];
-        $dat[9]  = $_GET["dat9"];
-    }
+    	if($mid == SXN_DATA)
+    	{
+        	$dat[1]  = $_GET["dat1"];
+        	$dat[2]  = $_GET["dat2"];
+        	$dat[3]  = $_GET["dat3"];
+        	$dat[4]  = $_GET["dat4"];
+        	$dat[5]  = $_GET["dat5"];
+        	$dat[6]  = $_GET["dat6"];
+        	$dat[7]  = $_GET["dat7"];
+        	$dat[8]  = $_GET["dat8"];
+        	$dat[9]  = $_GET["dat9"];
+    	}
   
- 
-    for($ii=1;$ii<=$nsid;$ii++)
-    {
-	   $sid = $msid[$ii];
-       $dd  = $dat[$ii];
-	   $dbM = new DataManager   (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_ADMIN);
-	   $dbM->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS,
+    	for($ii=1;$ii<=$nsid;$ii++)
+    	{
+	   	$sid = $msid[$ii];
+           	$dd  = $dat[$ii];
+	   	$dbM = new DataManager   (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_ADMIN);
+	   	$dbM->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS,
 							 SXN_ADMIN_STREAMS_COLUMN_SID."=".$sid); 
   
-	   $numRes = $dbM->retrieveNumberOfResults();
+	   	$numRes = $dbM->retrieveNumberOfResults();
  
-	   if($numRes == 1)
-	   {
-          while($data = $dbM->retrieveResult())
-          {   
-			 if($mid == SXN_DATA)
-			 {
-                   $tag = $data[SXN_ADMIN_STREAMS_COLUMN_TAG];
-                   if($tag) $name = $tag;
-                   setClientStatus($sid,$name,$ip);
-                  //echo SXN_USER, SXN_PASSWORD, \"localhost\", SXN_DATABASE_COLLECTOR)";
-		    	   $dbC = new DataCollector (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_COLLECTOR);
-				   $dbC->openDataBase();
-				   $success = $dbC->insertData($sid, $dd);
-	               echo "$sid $dd DATA";
-                   executeSidFunction($sid);
-                   getControlMessage($sid);
-		      }
+	   	if($numRes == 1)
+	   	{
+          		while($data = $dbM->retrieveResult())
+          		{   
+				if($mid == SXN_DATA)
+				{
+                   			$tag = $data[SXN_ADMIN_STREAMS_COLUMN_TAG];
+                   			if($tag) $name = $tag;
+                   			setClientStatus($sid,$name,$ip,$appid);
+                  			//echo SXN_USER, SXN_PASSWORD, \"localhost\", SXN_DATABASE_COLLECTOR)";
+		   			$dbC = new DataCollector (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_COLLECTOR);
+					$dbC->openDataBase();
+					$success = $dbC->insertData($sid, $dd);
+	           			echo "$sid $dd DATA";
+                   			executeSidFunction($sid);
+                   			getControlMessage($sid);
+				}
               
-             if($mid == SXN_LATEST)
-             {
-                 $value = lib_getLatestValue($sid);
-                 echo("$sid $value LATEST");
-             }
-             if($mid == SXN_DERLATEST)
-             {
-                 $value = lib_getLatestDerivative($sid);
-                 echo("$sid $value DERLATEST");
-             }
-             if($mid == SXN_MAILBOX)
-             { 
-                 executeSidFunction($sid);
-                 getControlMessage($sid);
-                 echo("$sid $value MAILBOX");
-             }
-		     
-		  }
-	   }
-    }
+             			if($mid == SXN_LATEST)
+             			{
+                			$value = lib_getLatestValue($sid);
+                 			echo("$sid $value LATEST");
+             			}
+             			if($mid == SXN_DERLATEST)
+             			{
+                			$value = lib_getLatestDerivative($sid);
+                			echo("$sid $value DERLATEST");
+             			}
+             			if($mid == SXN_MAILBOX)
+             			{ 
+                			executeSidFunction($sid);
+                			getControlMessage($sid);
+                			echo("$sid $value MAILBOX");
+             			}
+			}
+		}
+    	}
 }
 else
 {
