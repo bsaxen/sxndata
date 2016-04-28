@@ -1180,7 +1180,7 @@ echo("<br>");
 
 if($do == 'add_order')
 {
-	readCommandTypes();
+	lib_readCommandTypes();
     echo("<table border=\"1\">
           <form action=\"sxn_config.php\" method=\"post\">
             <input name=\"f_action\" type=\"hidden\" value=\"addOrderForm\" />
@@ -1188,9 +1188,9 @@ if($do == 'add_order')
             <tr><td>Order:</td><td> <select name=\"f_command\">");
             for($ii=1;$ii<=count($g_command_type_name);$ii++)
             {
-			   $temp1 = $g_command_type_map[$ii];
+			   //$temp1 = $g_command_type_map[$ii];
 			   $temp2 = $g_command_type_name[$ii];
-               echo("<option value=\"$temp1\">$temp2 </option>");
+               echo("<option value=\"$temp2\">$temp2 </option>");
             }
             echo("</select></td></tr>  
             <tr><td>Order value:</td><td> <input name=\"f_parameters\" type=\"text\" size=\"30\" /></td></tr>

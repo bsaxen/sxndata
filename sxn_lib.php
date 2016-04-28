@@ -1,4 +1,8 @@
 <?php
+//==================================================
+// sxn_lib.php
+// 2016-04-28
+//==================================================
 $g_servername = "localhost";
 $g_username =   SXN_USER; 
 $g_password =   SXN_PASSWORD;
@@ -238,7 +242,7 @@ function lib_readDataTypes()
 }
 
 //======================================================================
-function readCommandTypes()
+function lib_readCommandTypes()
 //======================================================================
 {
   global $g_command_type_id,$g_command_type_name,$g_command_type_map;
