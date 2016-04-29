@@ -191,6 +191,7 @@ if(isset($_GET['mid']))
     	{
 	   	$sid = $msid[$ii];
            	$dd  = $dat[$ii];
+           	setClientStatus($sid,$name,$ip,$appid);
 	   	$dbM = new DataManager   (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_ADMIN);
 	   	$dbM->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS,SXN_ADMIN_STREAMS_COLUMN_SID."=".$sid); 
   
@@ -204,7 +205,6 @@ if(isset($_GET['mid']))
 				{
                    			$tag = $data[SXN_ADMIN_STREAMS_COLUMN_TAG];
                    			//if($tag) $name = $tag;
-                   			setClientStatus($sid,$name,$ip,$appid);
                   			//echo SXN_USER, SXN_PASSWORD, \"localhost\", SXN_DATABASE_COLLECTOR)";
 		   			$dbC = new DataCollector (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_COLLECTOR);
 					$dbC->openDataBase();
