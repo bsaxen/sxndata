@@ -165,7 +165,7 @@ if(isset($_GET['mid']))
     	}
     	if($mid == SXN_CLIENT_STATUS)
         { 
-            	echo("CLIENT ")
+            	echo("CLIENT ");
         	system("ls *.ip > ipList.work"); 
 		lib_listIpFiles(2,"ipList.work"); 
                 echo(" STATUS");
