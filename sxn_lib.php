@@ -68,14 +68,12 @@ function lib_listFileContent($mode,$filename)
                     		echo("2");
                 	}
           	}
-          	else
-                	if($nmin < 0)echo("3");
-          	}            	
+          	if($nmin < 0)echo("3");
           }
-        fclose($handle);
     } 
     else
         echo("Error lib_listFileContent($filename)");
+   fclose($handle);
 }
 //=======================================
 function lib_listIpFiles($mode,$filename)
