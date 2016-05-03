@@ -60,7 +60,17 @@ function lib_listFileContent($mode,$filename)
           }
           if($mode == 2)
           {
-          	
+          	if($nmin >= 0)
+          	{
+                	if($nmin < 60)echo("1");
+                	if($nmin >= 60)
+                	{
+                    		echo("2");
+                	}
+          	}
+          	else
+                	if($nmin < 0)echo("3");
+          	}            	
           }
         fclose($handle);
     } 
