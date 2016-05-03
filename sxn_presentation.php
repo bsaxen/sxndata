@@ -438,7 +438,7 @@ function zoomed() {
     
     
    system("ls *.ip > ipList.work");
-   lib_listIpFiles("ipList.work");
+   lib_listIpFiles(1,"ipList.work");
 
    lib_readDataTypes(); 
    $g_dbM1->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS, "");
