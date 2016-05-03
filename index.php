@@ -163,6 +163,11 @@ if(isset($_GET['mid']))
     		setClientStatus(0,$name,$ip,$appid);
     		die();
     	}
+    	if($mid == SXN_CLIENT_STATUS)
+        { 
+                echo("CLIENT_STATUS");
+        }
+        
     	$nsid = $_GET["nsid"];
 
    	if($nsid > 9 || $nsid < 1) die;
