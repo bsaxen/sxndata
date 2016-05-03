@@ -22,7 +22,7 @@ $g_command_type_id   = array();
 $g_command_type_name = array();
 
 //=======================================
-function lib_listFileContent($filename)
+function lib_listFileContent($mode,$filename)
 //======================================= 
 {
  
@@ -44,29 +44,35 @@ function lib_listFileContent($filename)
           $hours   = floor($rest/3600);$rest = $temp%3600;
           $minutes = floor($rest/60);$seconds = $temp%60;
           $nmin    = floor($temp/60); 
-          if($nmin >= 0)
+          if($mode == 1)
           {
-                if($nmin < 60)echo("<p style=\"color:#00CD00\">$filename [$ip][$appid] Online($nmin)</p>");
-                if($nmin >= 60)
-                {
-                    echo("<p style=\"color:#0099ff\">$filename [$ip][$appid]  Offline($days days $hours hours $minutes minutes) $stemp</p>");
-                }
+          	if($nmin >= 0)
+          	{
+                	if($nmin < 60)echo("<p style=\"color:#00CD00\">$filename [$ip][$appid] Online($nmin)</p>");
+                	if($nmin >= 60)
+                	{
+                    		echo("<p style=\"color:#0099ff\">$filename [$ip][$appid]  Offline($days days $hours hours $minutes minutes) $stemp</p>");
+                	}
+          	}
+          	else
+                	if($nmin < 0)echo("<p style=\"color:#CD0000\">$filename [$ip][$appid] Error($nmin)</p>");
+          	}  
           }
-          else
-                if($nmin < 0)echo("<p style=\"color:#CD0000\">$filename [$ip][$appid] Error($nmin)</p>");
-            
-        }
+          if($mode == 2)
+          {
+          	
+          }
         fclose($handle);
     } 
     else
         echo("Error lib_listFileContent($filename)");
 }
 //=======================================
-function lib_listIpFiles($filename)
+function lib_listIpFiles($mode,$filename)
 //======================================= 
 {
     $now = date("Y-m-d H:i:s"); 
-    echo("<h2>Client Status $now</h2>");
+    echo("<h2>Client Status $now $mode</h2>");
     $handle = fopen($filename, "r");
     if ($handle) 
     {    
@@ -74,7 +80,7 @@ function lib_listIpFiles($filename)
         {
           $line = trim($line);
           //echo("file=$line<br>");
-          lib_listFileContent($line);
+          lib_listFileContent($mode,$line);
         }
         fclose($handle);
     } 
