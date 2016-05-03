@@ -80,7 +80,7 @@ function lib_listIpFiles($mode,$filename)
 //======================================= 
 {
     $now = date("Y-m-d H:i:s"); 
-    echo("<h2>Client Status $now $mode</h2>");
+    if($mode==1)echo("<h2>Client Status $now $mode</h2>");
     $handle = fopen($filename, "r");
     if ($handle) 
     {    
