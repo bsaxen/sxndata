@@ -165,7 +165,10 @@ if(isset($_GET['mid']))
     	}
     	if($mid == SXN_CLIENT_STATUS)
         { 
+        	system("ls *.ip > ipList.work"); 
+		lib_listIpFiles("ipList.work"); 
                 echo("CLIENT_STATUS");
+                die();
         }
         
     	$nsid = $_GET["nsid"];
