@@ -128,7 +128,7 @@ function setClientStatus($sid,$name,$ip,$appid)
    	if($sid > 0)
    		$filename = $name.$sid.'.ip';
    	else
-   		$filename = $name.'Beacon.ip';
+   		$filename = $name.'.ip';
    		
    	$now  = date("Y-m-d H:i:s");
    	$cont = $appid.' '.$ip.' '.$now;
