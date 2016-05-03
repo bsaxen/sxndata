@@ -22,6 +22,7 @@ define("SXN_LATEST"            , 2     , true);
 define("SXN_MAILBOX"           , 3     , true);
 define("SXN_DERLATEST"         , 4     , true);
 define("SXN_BEACON"            , 5     , true);
+define("SXN_CLIENT_STATUS"     , 6     , true);
 //------------------------------------------------------------------------------
 // Admin database
 //------------------------------------------------------------------------------
