@@ -1270,7 +1270,7 @@ if($do == 'add_sid')
 }
 if($do == 'upd_sid')
 {
-  readDataTypes(); 
+  lib_readDataTypes(); 
   $g_dbM1->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS, SXN_GENERAL_COLUMN_ID." = $s_id");
   while($data = $g_dbM1->retrieveResult())
   {
