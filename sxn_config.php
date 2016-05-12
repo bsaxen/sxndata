@@ -10,7 +10,7 @@
 <?php
 //==================================================
 // sxn_config.php
-// 2016-02-07
+// 2016-05-12
 //==================================================
 require_once('sxn_sql_lib.php');
 //require_once('sxn_definition.php');
@@ -834,8 +834,8 @@ echo("<body>");
 echo("<div class=\"top\">");
 
 echo("<div class=\"top_left\">");
-//echo("<h1><a href=\"#\">Nabton Admin 2015-02-11</a></h1>");
-echo("<h1><a href=\"index.php\" target=\"_blank\">SXNDATA 2015-11-16</a></h1>");
+
+echo("<h1><a href=\"index.php\" target=\"_blank\">ADMIN 2016-05-12</a></h1>");
 echo("</div>");
 
 //================================================================
@@ -1241,7 +1241,7 @@ echo("<div class=\"bottom_middle\">");
 echo("<a href=\"sxn_config.php?do=add_sid\">Add SID</a> <br>");
 echo("<a href=\"sxn_config.php?do=list_sid\">List all SIDs</a> <br>");
 //echo("TODO: <a href=\"sxn_config.php?do=del_sid\">Delete SID</a> <br>");
-echo("<a href=\"sxn_config.php?do=latest_sid\">Latest value SID</a> <br>");
+echo("<a href=\"sxn_config.php?do=conf_sid\">Configuration of SID</a> <br>");
 echo("<a href=\"sxn_config.php?do=add_data_sid\">Add data SID</a> <br>");
 echo("<br>");
 
