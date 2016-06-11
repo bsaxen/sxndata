@@ -1,7 +1,7 @@
 <?php
 //==================================================
 // sxn_lib.php
-// 2016-04-28
+// 2016-06-11
 //==================================================
 $g_servername = "localhost";
 $g_username =   SXN_USER; 
@@ -48,9 +48,14 @@ function lib_listFileContent($mode,$filename)
           {
           	if($nmin >= 0)
           	{
-                	if($nmin < 60)echo("<p style=\"color:#00CD00\">$filename [$ip][$appid] Online($nmin)</p>");
+                	if($nmin < 60)
+			{
+				echo("<img src=\"image/online.png\" alt=\"online\" width=64 height=32>");
+				echo("<p style=\"color:#00CD00\">$filename [$ip][$appid] Online($nmin)</p>");
+			}
                 	if($nmin >= 60)
                 	{
+				echo("<img src=\"image/offline.png\" alt=\"offline\" width=64 height=32>");
                     		echo("<p style=\"color:#0099ff\">$filename [$ip][$appid]  Offline($days days $hours hours $minutes minutes) $stemp</p>");
                 	}
           	}
