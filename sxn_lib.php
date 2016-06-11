@@ -46,7 +46,8 @@ function lib_listFileContent($mode,$filename)
           $nmin    = floor($temp/60); 
           if($mode == 1)
           {
-          	echo("<table border=\"1\">");
+          
+          	echo("<tr><td>Status</td><td>Device</td><td>Local IP Address</td><td>App Id</td><td>Last</td></tr>");
           	if($nmin >= 0)
           	{
                 	if($nmin < 60)
@@ -72,7 +73,7 @@ function lib_listFileContent($mode,$filename)
           	else
                 	if($nmin < 0)echo("<p style=\"color:#CD0000\">$filename [$ip][$appid] Error($nmin)</p>");
           	} 
-          	echo("</table>");
+          
           }
           if($mode == 2)
           {
