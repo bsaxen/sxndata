@@ -47,7 +47,7 @@ function lib_listFileContent($mode,$filename)
           if($mode == 1)
           {
           
-          	echo("<tr><td>Status</td><td>Device</td><td>Local IP Address</td><td>App Id</td><td>Last</td></tr>");
+         
           	if($nmin >= 0)
           	{
                 	if($nmin < 60)
@@ -100,13 +100,16 @@ function lib_listIpFiles($mode,$filename)
     if($mode==1)echo("<h2>Client Status $now $mode</h2>");
     $handle = fopen($filename, "r");
     if ($handle) 
-    {    
+    {  
+    	echo("<table border=1>");
+    	echo("<tr><td>Status</td><td>Device</td><td>Local IP Address</td><td>App Id</td><td>Last</td></tr>");
         while (($line = fgets($handle)) !== false) 
         {
           $line = trim($line);
           //echo("file=$line<br>");
           lib_listFileContent($mode,$line);
         }
+        echo("</table>");
         fclose($handle);
     } 
 }
