@@ -46,22 +46,33 @@ function lib_listFileContent($mode,$filename)
           $nmin    = floor($temp/60); 
           if($mode == 1)
           {
+          	echo("<table border=\"1\">");
           	if($nmin >= 0)
           	{
                 	if($nmin < 60)
 			{
+				echo("<tr><td>");
 				echo("<img src=\"image/online.png\" alt=\"online\" width=64 height=32>");
-				echo("<p style=\"color:#00CD00\">$filename [$ip][$appid] Online($nmin)</p>");
-			}
+				echo("</td>");
+				echo("<td><p style=\"color:#000000\">$filename</td><td> [$ip]</td><td>[$appid]</td><td>$nmin</td></p>");
+				echo("</tr>");
+          		}
                 	if($nmin >= 60)
                 	{
+                		echo("<tr><td>");
 				echo("<img src=\"image/offline.png\" alt=\"offline\" width=64 height=32>");
-                    		echo("<p style=\"color:#0099ff\">$filename [$ip][$appid]  Offline($days days $hours hours $minutes minutes) $stemp</p>");
+				echo("</td>");
+				echo("<td><p style=\"color:#000000\">$filename</td><td> [$ip]</td><td>[$appid]</td><td>$nmin</td></p>");
+				echo("</tr>");
+
+                    		//echo("<p style=\"color:#0099ff\">$filename [$ip][$appid]  Offline($days days $hours hours $minutes minutes) $stemp</p>");
                 	}
           	}
+          
           	else
                 	if($nmin < 0)echo("<p style=\"color:#CD0000\">$filename [$ip][$appid] Error($nmin)</p>");
-          	}  
+          	} 
+          	echo("</table>");
           }
           if($mode == 2)
           {
