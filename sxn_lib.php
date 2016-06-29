@@ -1,7 +1,7 @@
 <?php
 //==================================================
 // sxn_lib.php
-// 2016-06-11
+// 2016-06-29
 //==================================================
 $g_servername = "localhost";
 $g_username =   SXN_USER; 
@@ -100,16 +100,19 @@ function lib_listIpFiles($mode,$filename)
     if($mode==1)echo("<h2>Client Status $now $mode</h2>");
     $handle = fopen($filename, "r");
     if ($handle) 
-    {  
-    	echo("<table border=1>");
-    	echo("<tr><td>Status</td><td>Device</td><td>Local IP Address</td><td>App Id</td><td>Last</td></tr>");
+    { 
+    	if($mode == 1)
+    	{
+    		echo("<table border=1>");
+    		echo("<tr><td>Status</td><td>Device</td><td>Local IP Address</td><td>App Id</td><td>Last</td></tr>");
+        }
         while (($line = fgets($handle)) !== false) 
         {
           $line = trim($line);
           //echo("file=$line<br>");
           lib_listFileContent($mode,$line);
         }
-        echo("</table>");
+        if($mode == 1)echo("</table>");
         fclose($handle);
     } 
 }
