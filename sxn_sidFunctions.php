@@ -159,6 +159,37 @@ class controlSaxenHeater {
 } // Class
 
 //======================================================
+class autoMowerMap 
+{
+//======================================================
+    function doIt() 
+    {
+        
+        $sid_lat = 801; 
+        $sid_lon = 802; 
+        $sid_battery_status = 803; 
+        $latitude    = lib_getLatestValue($sid_lat);
+        if($latitude == SXN_NO_VALUE)
+        {
+            lib_log("CSH","No value for latitud t\n");
+            lib_log("CSH","-----End-----\n"); 
+        }
+        $longitude    = lib_getLatestValue($sid_lon);
+        if($longitude == SXN_NO_VALUE)
+        {
+            lib_log("CSH","No value for longitude t\n");
+            lib_log("CSH","-----End-----\n"); 
+        }
+        $battery_status    = lib_getLatestValue($sid_battery_status);
+        if($battery_status == SXN_NO_VALUE)
+        {
+            lib_log("CSH","No value for battery status t\n");
+            lib_log("CSH","-----End-----\n"); 
+        }
+        echo("Mapping ");
+    }
+}
+//======================================================
 class template {
 // 
 // Name your class!
