@@ -131,7 +131,7 @@ function setClientStatus($sid,$name,$ip,$appid)
    		$filename = $name.'.ip';
    		
    	$now  = date("Y-m-d H:i:s");
-   	$cont = $appid.' '.$ip.' '.$now;
+   	$cont = $sid.' '.$appid.' '.$ip.' '.$now;
    	if (file_exists($filename))
    	{
       		$fh = fopen($filename, "w");
