@@ -9,7 +9,7 @@ require_once('sxn_sql_lib.php');
 require_once('sxn_lib.php');
 
 $void    = $_SESSION['void'];
-
+system("ls *.ip > ipList.work"); 
 lib_listIpFiles(1,"ipList.work");
 
 
