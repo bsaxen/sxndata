@@ -188,9 +188,9 @@ body {
 </style>
 
   
-  <script src="../calendar/jquery-ui-1.11.4.custom/external/jquery/jquery.js"></script>
-  <script src="../calendar/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
-  <link rel="stylesheet" href="../calendar/jquery-ui-1.11.4.custom/jquery-ui.css">
+  <script src="calendar/jquery-ui-1.11.4.custom/external/jquery/jquery.js"></script>
+  <script src="calendar/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+  <link rel="stylesheet" href="calendar/jquery-ui-1.11.4.custom/jquery-ui.css">
   <script>
   $(function() {
     $( "#startDate" ).datepicker();
@@ -231,7 +231,7 @@ echo(" To <input type=\"text\" id=\"endDate\" name=\"date2\" value=\"$endDate\" 
    
     
     
-<script src="../d3/d3.min.js"></script>
+<script src="d3/d3.min.js"></script>
 
 
 <script>   
