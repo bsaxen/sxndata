@@ -44,6 +44,7 @@ function lib_listFileContent($mode,$filename)
           $hours   = floor($rest/3600);$rest = $temp%3600;
           $minutes = floor($rest/60);$seconds = $temp%60;
           $nmin    = floor($temp/60); 
+          $latest  = 12.34;
           if($mode == 1)
           {
           
@@ -55,7 +56,7 @@ function lib_listFileContent($mode,$filename)
 				echo("<tr><td>");
 				echo("<img src=\"image/online.png\" alt=\"online\" width=64 height=32>");
 				echo("</td>");
-				echo("<td><p style=\"color:#000000\">$filename</td><td> [$ip]</td><td>[$appid]</td><td>$nmin</td></p>");
+				echo("<td><p style=\"color:#000000\">$filename</td><td> [$ip]</td><td>[$appid]</td><td>$nmin</td><td>$latest</td></p>");
 				echo("</tr>");
           		}
                 	if($nmin >= 60)
@@ -63,7 +64,7 @@ function lib_listFileContent($mode,$filename)
                 		echo("<tr><td>");
 				echo("<img src=\"image/offline.png\" alt=\"offline\" width=64 height=32>");
 				echo("</td>");
-				echo("<td><p style=\"color:#000000\">$filename</td><td> [$ip]</td><td>[$appid]</td><td>$nmin</td></p>");
+				echo("<td><p style=\"color:#000000\">$filename</td><td> [$ip]</td><td>[$appid]</td><td>$nmin</td><td>$latest</td></p>");
 				echo("</tr>");
 
                     		//echo("<p style=\"color:#0099ff\">$filename [$ip][$appid]  Offline($days days $hours hours $minutes minutes) $stemp</p>");
@@ -104,7 +105,7 @@ function lib_listIpFiles($mode,$filename)
     	if($mode == 1)
     	{
     		echo("<table border=1>");
-    		echo("<tr><td>Status</td><td>Device</td><td>Local IP Address</td><td>App Id</td><td>Last</td></tr>");
+    		echo("<tr><td>Status</td><td>Device</td><td>Local IP Address</td><td>App Id</td><td>Last</td><td>Value</td></tr>");
         }
         while (($line = fgets($handle)) !== false) 
         {
