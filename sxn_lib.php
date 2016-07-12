@@ -32,7 +32,7 @@ function lib_listFileContent($mode,$filename)
     { 
         while (($line = fgets($handle)) !== false) 
         {
-          sscanf($line,"%s %s %s %s",$appid,$ip,$yymmdd,$hhmmss);
+          sscanf($line,"%d %s %s %s %s",$sid,$appid,$ip,$yymmdd,$hhmmss);
           $stemp = $yymmdd.' '. $hhmmss;
           $now = date("Y-m-d H:i:s"); 
           //$stemp = '2015-12-27 12:10:12';
