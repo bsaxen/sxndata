@@ -44,7 +44,7 @@ function lib_listFileContent($mode,$filename)
           $hours   = floor($rest/3600);$rest = $temp%3600;
           $minutes = floor($rest/60);$seconds = $temp%60;
           $nmin    = floor($temp/60); 
-          $latest  = 12.34;
+          $latest  = lib_getLatestValue($sid);
           if($mode == 1)
           {
           
