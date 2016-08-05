@@ -24,13 +24,8 @@ $docRoot = $_SERVER['DOCUMENT_ROOT'];
 
 $do = (isset($_GET['do']) ? $_GET['do'] : null);
 
-if($do != 'add_db')
-{
-  $g_dbM1 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_ADMIN);
-  $g_dbM2 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_COLLECTOR);
-  $g_dbM3 = new DataManager("root", "amazon", "localhost", SXN_DATABASE_CONTROL);
-}
-if(isset($_GET['photo']))
+
+if($do != 'photo')
 {
     $sid = 7;
     $command    = 'FF_PHOTO';
