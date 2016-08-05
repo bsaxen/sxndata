@@ -41,8 +41,17 @@ if(isset($_GET['photo']))
                         SXN_CONTROL_COMMANDS_COLUMN_COMMAND,
                         SXN_CONTROL_COMMANDS_COLUMN_STATUS);
     $g_dbM3->insertRow(SXN_CONTROL_TABLE_COMMANDS,$columnArray,$valueArray);
+    $sid = 8;
+    $command    = 'FF_PHOTO';
+    $parameters = ' ';
+    $order = $command.' '.$parameters;
+    $valueArray  = array($sid,$order,'new');
+    $columnArray = array(SXN_CONTROL_COMMANDS_COLUMN_SID,
+                        SXN_CONTROL_COMMANDS_COLUMN_COMMAND,
+                        SXN_CONTROL_COMMANDS_COLUMN_STATUS);
+    $g_dbM3->insertRow(SXN_CONTROL_TABLE_COMMANDS,$columnArray,$valueArray);
 }
 echo("<body>");
-echo("<a href=\"sxn_config.php?do=import\">Import data from NBC logfile</a> <br>");
+echo("<a href=\"sxn_nytomta.php?do=photo\">Nytomta photos</a> <br>");
 
 echo("</body></html>");
