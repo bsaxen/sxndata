@@ -48,5 +48,5 @@ if($do == 'photo')
 }
 echo("<body>");
 echo("<a href=\"sxn_nytomta.php?do=photo\">Nytomta photos</a> <br>");
-
+system("ls sxn_photo/*.jpg");
 echo("</body></html>");
