@@ -25,7 +25,7 @@ $docRoot = $_SERVER['DOCUMENT_ROOT'];
 $do = (isset($_GET['do']) ? $_GET['do'] : null);
 
 
-if($do != 'photo')
+if($do == 'photo')
 {
     $sid = 7;
     $command    = 'FF_PHOTO';
