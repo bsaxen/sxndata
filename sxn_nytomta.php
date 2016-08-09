@@ -47,7 +47,13 @@ if($do == 'photo')
     $g_dbM3->insertRow(SXN_CONTROL_TABLE_COMMANDS,$columnArray,$valueArray);
 }
 $sid302 = lib_getLatestValue(302);// el
+$sid7 =  system("ls ../sxn_photo/*sid7*|tail -n 1");
+$sid8 =  system("ls ../sxn_photo/*sid8*|tail -n 1");
 echo("<body>");
 echo("<h1><a href=\"sxn_nytomta.php?do=photo\">Nytomta</a></h1> <br><br>");
 echo("<h1>El just nu $sid302</h1> <br>");
+echo("<img src=\"$sid7\" alt=\"Nytomta Camera 7\" /><br");
+echo("<img src=\"$sid8\" alt=\"Nytomta Camera 8\" />");
 echo("</body></html>");
+?>
+
