@@ -49,5 +49,5 @@ if($do == 'photo')
 $sid302 = lib_getLatestValue(302);// el
 echo("<body>");
 echo("<h1><a href=\"sxn_nytomta.php?do=photo\">Nytomta</a></h1> <br><br>");
-echo("<h1><a El just nu $sid302</h1> <br>");
+echo("<h1>El just nu $sid302</h1> <br>");
 echo("</body></html>");
