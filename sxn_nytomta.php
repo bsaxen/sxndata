@@ -50,10 +50,12 @@ $sid302 = lib_getLatestValue(302);// el
 $sid7 =  system("ls ../sxn_photo/*sid7*|tail -n 1");
 $sid8 =  system("ls ../sxn_photo/*sid8*|tail -n 1");
 echo("<body>");
-echo("<h1><a href=\"sxn_nytomta.php?do=photo\">Nytomta</a></h1> <br><br>");
-echo("<h1>El just nu $sid302</h1> <br>");
-echo("<img src=\"$sid7\" alt=\"Nytomta Camera 7\" width=\"200\" height=\"200\" /><br>");
-echo("<img src=\"$sid8\" alt=\"Nytomta Camera 8\" width=\"200\" height=\"200\" />");
+echo("<h1><a href=\"sxn_nytomta.php\">Nytomta</h1><br>");
+echo("<h2><a href=\"sxn_nytomta.php?do=photo\">Ta bild </a></h2>");
+echo("<h2><a href=\"sxn_nytomta.php\"> Uppdatera</a></h2>");
+echo("<h1>Elektricitet $sid302 Watt</h1> <br>");
+echo("<img src=\"$sid7\" alt=\"Nytomta Camera 7\" width=\"600\" height=\"500\" /><br>");
+echo("<img src=\"$sid8\" alt=\"Nytomta Camera 8\" width=\"600\" height=\"500\" />");
 echo("</body></html>");
 ?>
 
