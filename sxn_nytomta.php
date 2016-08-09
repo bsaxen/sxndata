@@ -52,7 +52,7 @@ $sid8 =  system("ls ../sxn_photo/*sid8*|tail -n 1");
 echo("<body>");
 echo("<h1><a href=\"sxn_nytomta.php?do=photo\">Nytomta</a></h1> <br><br>");
 echo("<h1>El just nu $sid302</h1> <br>");
-echo("<img src=\"$sid7\" alt=\"Nytomta Camera 7\" width=\"200\" height=\"200\" /><br");
+echo("<img src=\"$sid7\" alt=\"Nytomta Camera 7\" width=\"200\" height=\"200\" /><br>");
 echo("<img src=\"$sid8\" alt=\"Nytomta Camera 8\" width=\"200\" height=\"200\" />");
 echo("</body></html>");
 ?>
