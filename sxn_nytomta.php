@@ -8,9 +8,11 @@
 	<link rel="stylesheet" type="text/css" href="sxndata.css" title="Variant Duo" media="screen,projection" />
 	<title>SXN Data Admin</title>
 <?php
+ini_set('SMTP', 'smtp.gmail.com'); 
+ini_set('smtp_port', 465); 
 //==================================================
 // sxn_config.php
-// 2016-05-12
+// 2016-08-11
 //==================================================
 require_once('sxn_sql_lib.php');
 //require_once('sxn_definition.php');
