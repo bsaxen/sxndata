@@ -227,12 +227,12 @@ if(isset($_GET['mid']))
              			if($mid == SXN_LATEST)
              			{
                 			$value = lib_getLatestValue($sid);
-                 			echo("$sid $value LATEST");
+                 			echo("$sid:$value:LATEST");
              			}
              			if($mid == SXN_DERLATEST)
              			{
                 			$value = lib_getLatestDerivative($sid);
-                			echo("$sid $value DERLATEST");
+                			echo("$sid:$value:DERLATEST");
              			}
              			if($mid == SXN_MAILBOX)
              			{ 
