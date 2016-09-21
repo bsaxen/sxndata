@@ -201,7 +201,7 @@ if(isset($_GET['mid']))
     	{
 	   	$sid = $msid[$ii];
            	$dd  = $dat[$ii];
-           	setClientStatus($sid,$name,$ip,$appid);
+           	if($mid == SXN_DATA)setClientStatus($sid,$name,$ip,$appid);
 	   	$dbM = new DataManager   (SXN_USER, SXN_PASSWORD, "localhost", SXN_DATABASE_ADMIN);
 	   	$dbM->selectAllFromTable(SXN_ADMIN_TABLE_STREAMS,SXN_ADMIN_STREAMS_COLUMN_SID."=".$sid); 
   
