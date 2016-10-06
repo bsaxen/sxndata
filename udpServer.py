@@ -5,25 +5,28 @@ import mysql.connector
 import socket
 
 #================================================
-TCP_IP = '127.0.0.1'
-TCP_PORT = 5005
-BUFFER_SIZE = 20  # Normally 1024, but we want fast response
+#TCP_IP = '127.0.0.1'
+#TCP_PORT = 5005
+#BUFFER_SIZE = 20  # Normally 1024, but we want fast response
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((TCP_IP, TCP_PORT))
-s.listen(1)
-conn, addr = s.accept()
-print 'Connection address:', addr
-while 1:
-   data = conn.recv(BUFFER_SIZE)
-   if not data: break
-   print "received data:", data
-   conn.send(data)  # echo
-conn.close()
+#s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#s.bind((TCP_IP, TCP_PORT))
+#s.listen(1)
+#conn, addr = s.accept()
+#print 'Connection address:', addr
+#while 1:
+#   data = conn.recv(BUFFER_SIZE)
+#   if not data: break
+#   print "received data:", data
+#   conn.send(data)  # echo
+#conn.close()
 #================================================
+UDP_IP = "127.0.0.1"
+UDP_PORT = 5005
+
 sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
-  sock.bind((UDP_IP, UDP_PORT))
+sock.bind((UDP_IP, UDP_PORT))
   
 while True:
     data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
@@ -37,31 +40,12 @@ cnx = mysql.connector.connect(user='scott', password='tiger',
 #cnx = mysql.connector.connect(user='scott', database='employees')
 cursor = cnx.cursor()
 
-tomorrow = datetime.now().date() + timedelta(days=1)
+timestamp = datetime.now().date()
 
-add_employee = ("INSERT INTO employees "
-               "(first_name, last_name, hire_date, gender, birth_date) "
-               "VALUES (%s, %s, %s, %s, %s)")
-add_salary = ("INSERT INTO salaries "
-              "(emp_no, salary, from_date, to_date) "
-              "VALUES (%(emp_no)s, %(salary)s, %(from_date)s, %(to_date)s)")
+sql = "INSERT INTO SID%d (value) VALUES (%f)" % (sid,value)
 
-data_employee = ('Geert', 'Vanderkelen', tomorrow, 'M', date(1977, 6, 14))
+cursor.execute(sql)
 
-# Insert new employee
-cursor.execute(add_employee, data_employee)
-emp_no = cursor.lastrowid
-
-# Insert salary information
-data_salary = {
-  'emp_no': emp_no,
-  'salary': 50000,
-  'from_date': tomorrow,
-  'to_date': date(9999, 1, 1),
-}
-cursor.execute(add_salary, data_salary)
-
-# Make sure data is committed to the database
 cnx.commit()
 
 cursor.close()
