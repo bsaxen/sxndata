@@ -23,31 +23,24 @@ import socket
 #================================================
 UDP_IP = "127.0.0.1"
 UDP_PORT = 5005
-
 sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
 sock.bind((UDP_IP, UDP_PORT))
-  
 while True:
     data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
     print "received message:", data
+    work = data.split(',')
+    sid = wokr[0]
+    value = work[1]
+    print "sid=" + sid + " value=" + value
 #================================================
-
-cnx = mysql.connector.connect(user='scott', password='tiger',
+    cnx = mysql.connector.connect(user='scott', password='tiger',
                               host='127.0.0.1',
                               database='employees')
-
 #cnx = mysql.connector.connect(user='scott', database='employees')
-cursor = cnx.cursor()
-
-timestamp = datetime.now().date()
-
-sql = "INSERT INTO SID%d (value) VALUES (%f)" % (sid,value)
-
-cursor.execute(sql)
-
-cnx.commit()
-
-cursor.close()
-cnx.close()
-
+    cursor = cnx.cursor()
+    sql = "INSERT INTO SID%d (value) VALUES (%f)" % (sid,value)
+    cursor.execute(sql)
+    cnx.commit()
+    cursor.close()
+    cnx.close()
