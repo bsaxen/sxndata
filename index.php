@@ -220,7 +220,7 @@ if(isset($_GET['mid']))
 					$dbC->openDataBase();
 					$success = $dbC->insertData($sid, $dd);
 	           			echo "$sid $dd DATA";
-                   			executeSidFunction($sid);
+                   			lib_executeSidFunction($sid);
                    			getControlMessage($sid);
 				}
               
@@ -236,7 +236,7 @@ if(isset($_GET['mid']))
              			}
              			if($mid == SXN_MAILBOX)
              			{ 
-                			executeSidFunction($sid);
+                			lib_executeSidFunction($sid);
                 			getControlMessage($sid);
                 			echo("$sid $value MAILBOX");
              			}
