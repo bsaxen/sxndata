@@ -62,13 +62,14 @@ $indoorTemp   = lib_getLatestValue(2);
 	
 $energy = 100*($waterTempOut - $waterTempIn);
 echo("<body>");
-echo("<h1><a href=\"sxn_csh.php\">Control Saxen Heater</h1><br>");
-echo("<a href=\"sxn_csh.php?do=inc\">Target + </a><br>");
-echo("<a href=\"sxn_csh.php?do=dec\">Target - </a><br>");
-echo("<a href=\"sxn_csh.php?do=log\"> View Log</a><br>");
-echo("<a href=\"sxn_csh.php?do=csl\"> Clear Log</a><br>");
-echo("<a href=\"sxn_csh.php\"> Uppdatera</a><br>");
-	
+echo("<table border=\"1\">");
+echo("<tr><td><a href=\"sxn_csh.php\">Control Saxen Heater</a></td></tr>");
+echo("<tr><td><a href=\"sxn_csh.php?do=inc\">Target + </a></td></tr>");
+echo("<tr><td><a href=\"sxn_csh.php?do=dec\">Target - </a></td></tr>");
+echo("<tr><td><a href=\"sxn_csh.php?do=log\"> View Log</a></td></tr>");
+echo("<tr><td><a href=\"sxn_csh.php?do=csl\"> Clear Log</a></td></tr>");
+echo("<tr><td><a href=\"sxn_csh.php\"> Uppdatera</a></td></tr>");
+echo("</table>");	
 echo("<table border=\"1\">");
 echo("<tr><td>Energy Consumption</td><td>$energy</td></tr>");
 echo("<tr><td>Target Temperature</td><td>$targetTemp</td></tr>");
