@@ -48,7 +48,7 @@ if($do == 'inc')
 if($do == 'dec')
 {
     $targetTemp = (int)lib_recall($labelTargetTemperature) - 1.0; 	
-    lib_remember($labelTargetTemperature,$snow);
+    lib_remember($labelTargetTemperature,$targetTemp);
 }
 $targetTemp = (int)lib_recall($labelTargetTemperature); 
 $waterTempOut = lib_getLatestValue(1);
