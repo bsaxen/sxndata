@@ -27,6 +27,10 @@ $labelTargetTemperature   = "CSH_targetTemperature";
 $do = (isset($_GET['do']) ? $_GET['do'] : null);
 
 
+if($do == 'log')
+{
+
+}
 if($do == 'inc')
 {
     $sid = 1;
@@ -48,8 +52,9 @@ $indoorTemp   = lib_getLatestValue(2);
 $energy = 100*($waterTempOut - $waterTempIn);
 echo("<body>");
 echo("<h1><a href=\"sxn_csh.php\">Control Saxen Heater</h1><br>");
-echo("<h2><a href=\"sxn_csh.php?do=inc\">++ </a></h2>");
-echo("<h2><a href=\"sxn_csh.php?do=dec\">-- </a></h2>");
+//echo("<h2><a href=\"sxn_csh.php?do=inc\">++ </a></h2>");
+//echo("<h2><a href=\"sxn_csh.php?do=dec\">-- </a></h2>");
+echo("<h2><a href=\"sxn_csh.php?do=log\"> Log</a></h2>");
 echo("<h2><a href=\"sxn_csh.php\"> Uppdatera</a></h2>");
 echo("<h1>Energy Consumption $energy</h1> <br>");
 echo("<h1>Target Temperature $targetTemp</h1> <br>");
