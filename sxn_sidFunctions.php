@@ -73,12 +73,14 @@ class controlSaxenHeater {
         lib_log("CSH","No value for IndoorTemp\n"); 
     }    
     //======================================================== 
+    $energy =  100*($waterOut - $waterIn);
               
     $logmsg = "Indoor      = ".$indoorTemp."\n";    lib_log("CSH",$logmsg);
     $logmsg = "WaterIn     = ".$waterIn."\n";       lib_log("CSH",$logmsg);
     $logmsg = "WaterOut    = ".$waterOut."\n";      lib_log("CSH",$logmsg);
     $logmsg = "OutdoorTemp = ".$outdoorTemp."\n";   lib_log("CSH",$logmsg);
     $logmsg = "SmokeTemp   = ".$smokeTemp."\n";     lib_log("CSH",$logmsg);
+    $logmsg = "Energy      = ".$energy."\n";        lib_log("CSH",$logmsg);
         
     lib_log("CSH","Action:");    
     if($diff > $inertiaTime) // 3 minutes for order to effect the temperature  
