@@ -46,41 +46,33 @@ class controlSaxenHeater {
     lib_log("CSH","Order latest: $snow [$prev] $diff($inertiaTime)\n");  
         
     //========================================================     
-    //$waterIn     = lib_getLatestValue($waterIn_sid);
     $waterIn    = lib_getLatestValue($waterIn_sid);
     if($waterIn == SXN_NO_VALUE)
     {
         lib_log("CSH","No value for WaterIn\n");
-        //lib_log("CSH","-----End-----\n"); 
-        //return;
+        return;
     }
     $waterOut    = lib_getLatestValue($waterOut_sid);
     if($waterOut == SXN_NO_VALUE)
     {
         lib_log("CSH","No value for WaterOut\n");
-        //lib_log("CSH","-----End-----\n"); 
-        //return;
+        return;
     }
     $smokeTemp   = lib_getLatestValue($smokeTemp_sid);
     if($smokeTemp == SXN_NO_VALUE)
     {
         lib_log("CSH","No value for SmokeTemp\n");
-        //lib_log("CSH","-----End-----\n"); 
-        //return;
+        return;
     }
     $outdoorTemp = lib_getLatestValue($outdoorTemp_sid);
     if($outdoorTemp == SXN_NO_VALUE) 
     {
         lib_log("CSH","No value for OutdoorTemp\n"); 
-        //lib_log("CSH","-----End-----\n"); 
-        //return;
     }    
     $indoorTemp  = lib_getLatestValue($indoorTemp_sid);
     if($outdoorTemp == SXN_NO_VALUE) 
     {
         lib_log("CSH","No value for IndoorTemp\n"); 
-        //lib_log("CSH","-----End-----\n"); 
-        //return;
     }    
     //======================================================== 
               
@@ -94,13 +86,13 @@ class controlSaxenHeater {
     if($diff > $inertiaTime) // 3 minutes for order to effect the temperature  
     {
     //echo("Algo: $delta<br>");
-      lib_log("CSH","*");
+      lib_log("CSH","Wake Up ");
       if($smokeTemp > 25.0 && $waterOut > $waterIn) // Only control if Heater is ON
       {
         lib_log("CSH","!");
         if($waterOut < $lowWaterOut) // Increase Heat
         {
-              lib_log("CSH","stepper + ");
+              lib_log("CSH"," + ");
               $order = "NBC_STEPPER_CTRL 1 5 20";
               lib_log("CSH",$order);
               insertOrder($waterOut_sid,$order);
@@ -108,12 +100,17 @@ class controlSaxenHeater {
         }
         if($waterOut > $highWaterOut) // Decrease Heat
         {
-              lib_log("CSH","stepper - ");
+              lib_log("CSH"," - ");
               $order = "NBC_STEPPER_CTRL 2 5 20";
               lib_log("CSH",$order);
               insertOrder($waterOut_sid,$order); 
               lib_remember($labelLatestOrderTime,$snow); 
         }
+      }
+      else
+      {
+           if($smokeTemp > 25.0)lib_log("CSH","Heater is off ");
+           if($waterOut > $waterIn)lib_log("CSH","No heating is needed "); 
       }
     }
     else
