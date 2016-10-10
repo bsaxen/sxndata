@@ -23,15 +23,19 @@ class controlSaxenHeater {
     $outdoorTemp_sid = 6;// 6
     $indoorTemp_sid  = 2;// 2
         
-    $lowWaterOut   = 26.0;
-    $highWaterOut  = 28.0;
-    $inertiaTime   = 180; // sec
+
         
     // Memeories
     //-------------------------------
+    $labelTargetTemperature   = "CSH_targetTemperature";
     $labelLatestOrderTime     = "CSH_latestOrderTime";
 
     //======================================================== 
+    $targetTemp = lib_recall($labelLatestOrderTime); 
+    $lowWaterOut   = $targetTemp - 1.0; //26.0;
+    $highWaterOut  = $targetTemp + 1.0; //28.0;
+    $inertiaTime   = 180; // sec
+        
         
     // Recall time and date for latest order
     $prev = lib_recall($labelLatestOrderTime); 
