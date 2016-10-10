@@ -24,7 +24,7 @@ class controlSaxenHeater {
     $indoorTemp_sid  = 2;// 2
         
     $lowWaterOut = 26.0;
-    $highWaterOut  = 27.0;
+    $highWaterOut  = 28.0;
     $inertiaTime = 180; // sec
         
     // Memeories
