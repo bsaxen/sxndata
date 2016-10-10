@@ -86,7 +86,7 @@ class controlSaxenHeater {
      
     //echo("Algo: $delta<br>");
       lib_log("CSH","Wake Up ");
-      if($smokeTemp > 25.0 && $waterOut < $waterIn) // Only control if Heater is ON
+      if($smokeTemp > 25.0 && $waterOut > $waterIn) // Only control if Heater is ON
       {
         lib_log("CSH","!");
         if($waterOut < $lowWaterOut) // Increase Heat
