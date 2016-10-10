@@ -126,9 +126,9 @@ function setClientStatus($sid,$name,$ip,$appid)
 	if(!$appid) $appid = "noAppid";
 	
    	if($sid > 0)
-   		$filename = $name.$sid.'.ip';
+   		$filename = 'ip/'.$name.$sid.'.ip';
    	else
-   		$filename = $name.'.ip';
+   		$filename = 'ip/'.$name.'.ip';
    		
    	$now  = date("Y-m-d H:i:s");
    	$cont = $sid.' '.$appid.' '.$ip.' '.$now;
