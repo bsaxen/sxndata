@@ -142,7 +142,7 @@ class controlSaxenHeater {
     }
     else
     {
-        lib_log("CSH","Not time for action");
+        lib_log("CSH","Sleeping");
     }
     lib_log("CSH","\n");
     lib_log("CSH","-----End-----\n");     
