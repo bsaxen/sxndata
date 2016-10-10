@@ -29,17 +29,19 @@ $do = (isset($_GET['do']) ? $_GET['do'] : null);
 if($do == 'inc')
 {
     $sid = 1;
-    $command    = 'NBC_STEPPER_CTRL 1 10 20';
-    $parameters = ' ';
-    $order = $command.' '.$parameters;
-    $valueArray  = array($sid,$order,'new');
-    $columnArray = array(SXN_CONTROL_COMMANDS_COLUMN_SID,
-                        SXN_CONTROL_COMMANDS_COLUMN_COMMAND,
-                        SXN_CONTROL_COMMANDS_COLUMN_STATUS);
-    $g_dbM3->insertRow(SXN_CONTROL_TABLE_COMMANDS,$columnArray,$valueArray);
+    $order  = 'NBC_STEPPER_CTRL 1 10 20';
+    insertOrder($sid,$order);
+}
+if($do == 'dec')
+{
+    $sid = 1;
+    $order  = 'NBC_STEPPER_CTRL 2 10 20';
+    insertOrder($sid,$order);
 }
 $waterTempOut = lib_getLatestValue(1);
 $waterTempIn  = lib_getLatestValue(3);
+$outdoorTemp  = lib_getLatestValue(9);
+$indoorTemp   = lib_getLatestValue(2);
 echo("<body>");
 echo("<h1><a href=\"sxn_csh.php\">Control Saxen Heater</h1><br>");
 echo("<h2><a href=\"sxn_csh.php?do=inc\">++ </a></h2>");
@@ -47,5 +49,7 @@ echo("<h2><a href=\"sxn_csh.php?do=dec\">-- </a></h2>");
 echo("<h2><a href=\"sxn_csh.php\"> Uppdatera</a></h2>");
 echo("<h1>Water Out $waterTempOut</h1> <br>");
 echo("<h1>Water In $waterTempIn</h1> <br>");
+echo("<h1>Outdoor $outdoorTemp</h1> <br>");
+echo("<h1>Indoor $indoorTemp</h1> <br>");
 echo("</body></html>");
 ?>
