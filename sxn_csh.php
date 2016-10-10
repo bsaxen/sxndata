@@ -43,7 +43,7 @@ if($do == 'log')
 if($do == 'inc')
 {
     $targetTemp = (int)lib_recall($labelTargetTemperature) + 1.0; 	
-    lib_remember($labelTargetTemperature,$snow);
+    lib_remember($labelTargetTemperature,$targetTemp);
 }
 if($do == 'dec')
 {
