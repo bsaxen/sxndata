@@ -23,9 +23,9 @@ class controlSaxenHeater {
     $outdoorTemp_sid = 6;// 6
     $indoorTemp_sid  = 2;// 2
         
-    $lowWaterOut = 26.0;
+    $lowWaterOut   = 26.0;
     $highWaterOut  = 28.0;
-    $inertiaTime = 180; // sec
+    $inertiaTime   = 180; // sec
         
     // Memeories
     //-------------------------------
@@ -84,17 +84,18 @@ class controlSaxenHeater {
     }    
     //======================================================== 
               
-    $logmsg = "Indoor=".$indoorTemp."\n";       lib_log("CSH",$logmsg);
-    $logmsg = "WaterOut=".$waterOut."\n";       lib_log("CSH",$logmsg);
-    $logmsg = "OutdoorTemp=".$outdoorTemp."\n"; lib_log("CSH",$logmsg);
-    $logmsg = "SmokeTemp=".$smokeTemp."\n";     lib_log("CSH",$logmsg);
+    $logmsg = "Indoor      = ".$indoorTemp."\n";    lib_log("CSH",$logmsg);
+    $logmsg = "WaterIn     = ".$waterIn."\n";       lib_log("CSH",$logmsg);
+    $logmsg = "WaterOut    = ".$waterOut."\n";      lib_log("CSH",$logmsg);
+    $logmsg = "OutdoorTemp = ".$outdoorTemp."\n";   lib_log("CSH",$logmsg);
+    $logmsg = "SmokeTemp   = ".$smokeTemp."\n";     lib_log("CSH",$logmsg);
         
     lib_log("CSH","Action:");    
     if($diff > $inertiaTime) // 3 minutes for order to effect the temperature  
     {
     //echo("Algo: $delta<br>");
       lib_log("CSH","*");
-      if($smokeTemp > 25.0) // Only control if Heater is ON
+      if($smokeTemp > 25.0 && $waterOut > $waterIn) // Only control if Heater is ON
       {
         lib_log("CSH","!");
         if($waterOut < $lowWaterOut) // Increase Heat
