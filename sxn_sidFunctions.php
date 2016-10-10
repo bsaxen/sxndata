@@ -93,6 +93,11 @@ class controlSaxenHeater {
         {
               $steps = ($highWaterOut + $lowWaterOut)/2.0 - $waterOut;
               $steps = round($steps*5);
+              if($steps < 1 || $steps > 50)
+              {
+                $steps = 1;
+                $logmsg = "Error: Steps out of range ".$steps."\n";     lib_log("CSH",$logmsg);
+              }
               lib_log("CSH"," + ");
               $order = "NBC_STEPPER_CTRL 1 ".$steps." 20";
               lib_log("CSH",$order);
@@ -103,6 +108,11 @@ class controlSaxenHeater {
         {
               $steps = $waterOut - ($highWaterOut + $lowWaterOut)/2.0;
               $steps = round($steps*5);
+              if($steps < 1 || $steps > 50)
+              {
+                $steps = 1;
+                $logmsg = "Error: Steps out of range ".$steps."\n";     lib_log("CSH",$logmsg);
+              }
               lib_log("CSH"," - ");
               $order = "NBC_STEPPER_CTRL 2 ".$steps." 20";
               lib_log("CSH",$order);
