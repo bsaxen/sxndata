@@ -27,6 +27,10 @@ $labelTargetTemperature   = "CSH_targetTemperature";
 $do = (isset($_GET['do']) ? $_GET['do'] : null);
 
 
+if($do == 'csl')
+{
+	system("rm -f log/CSH.log");
+}
 if($do == 'log')
 {
     $ii = 0;
@@ -59,10 +63,11 @@ $indoorTemp   = lib_getLatestValue(2);
 $energy = 100*($waterTempOut - $waterTempIn);
 echo("<body>");
 echo("<h1><a href=\"sxn_csh.php\">Control Saxen Heater</h1><br>");
-echo("<p><a href=\"sxn_csh.php?do=inc\">Target + </a></p>");
-echo("<p><a href=\"sxn_csh.php?do=dec\">Target - </a></p>");
-echo("<p><a href=\"sxn_csh.php?do=log\"> Log</a></p>");
-echo("<p><a href=\"sxn_csh.php\"> Uppdatera</a></p>");
+echo("<a href=\"sxn_csh.php?do=inc\">Target + </a>");
+echo("<a href=\"sxn_csh.php?do=dec\">Target - </a>");
+echo("<a href=\"sxn_csh.php?do=log\"> View Log</a>");
+echo("<a href=\"sxn_csh.php?do=csl\"> Clear Log</a>");
+echo("<a href=\"sxn_csh.php\"> Uppdatera</a>");
 	
 echo("<table border=\"1\">");
 echo("<tr><td>Energy Consumption</td><td>$energy</td></tr>");
