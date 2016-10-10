@@ -59,6 +59,7 @@ $waterTempOut = lib_getLatestValue(1);
 $waterTempIn  = lib_getLatestValue(3);
 $outdoorTemp  = lib_getLatestValue(9);
 $indoorTemp   = lib_getLatestValue(2);
+$smokeTemp    = lib_getLatestValue(4);
 	
 $energy = 100*($waterTempOut - $waterTempIn);
 echo("<body>");
@@ -77,6 +78,7 @@ echo("<tr><td>Water Out</td><td>$waterTempOut</td></tr>");
 echo("<tr><td>Water In</td><td>$waterTempIn</td></tr>");
 echo("<tr><td>Outdoor</td><td>$outdoorTemp</td></tr>");
 echo("<tr><td>Indoor</td><td>$indoorTemp</td></tr>");
+echo("<tr><td>Smoke</td><td>$smokeTemp</td></tr>");
 echo("</table>");
 	
 echo("</body></html>");
