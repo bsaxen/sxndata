@@ -30,8 +30,6 @@ class controlSaxenHeater {
     // Memeories
     //-------------------------------
     $labelLatestOrderTime     = "CSH_latestOrderTime";
-    $labelLatestTargetTime    = "CSH_latestTargetTime";
-    $labelTargetValue         = "CSH_targetValue";
 
     //======================================================== 
         
@@ -43,7 +41,7 @@ class controlSaxenHeater {
         lib_remember($labelLatestOrderTime,$snow); 
     }
     $diff = strtotime($snow) - strtotime($prev);
-    lib_log("CSH","Order latest: $snow [$prev] $diff($inertiaTime)\n");  
+    lib_log("CSH","==> $snow [$prev] $diff($inertiaTime)\n");  
         
     //========================================================     
     $waterIn    = lib_getLatestValue($waterIn_sid);
@@ -85,23 +83,28 @@ class controlSaxenHeater {
     lib_log("CSH","Action:");    
     if($diff > $inertiaTime) // 3 minutes for order to effect the temperature  
     {
+     
     //echo("Algo: $delta<br>");
       lib_log("CSH","Wake Up ");
-      if($smokeTemp > 25.0 && $waterOut > $waterIn) // Only control if Heater is ON
+      if($smokeTemp > 25.0 && $waterOut < $waterIn) // Only control if Heater is ON
       {
         lib_log("CSH","!");
         if($waterOut < $lowWaterOut) // Increase Heat
         {
+              $steps = ($highWaterOut + $lowWaterOut)/2.0 - $waterOut;
+              $steps = round($steps*5);
               lib_log("CSH"," + ");
-              $order = "NBC_STEPPER_CTRL 1 5 20";
+              $order = "NBC_STEPPER_CTRL 1 ".$steps." 20";
               lib_log("CSH",$order);
               insertOrder($waterOut_sid,$order);
               lib_remember($labelLatestOrderTime,$snow); 
         }
         if($waterOut > $highWaterOut) // Decrease Heat
         {
+              $steps = $waterOut - ($highWaterOut + $lowWaterOut)/2.0;
+              $steps = round($steps*5);
               lib_log("CSH"," - ");
-              $order = "NBC_STEPPER_CTRL 2 5 20";
+              $order = "NBC_STEPPER_CTRL 2 ".$steps." 20";
               lib_log("CSH",$order);
               insertOrder($waterOut_sid,$order); 
               lib_remember($labelLatestOrderTime,$snow); 
@@ -109,8 +112,8 @@ class controlSaxenHeater {
       }
       else
       {
-           if($smokeTemp > 25.0)lib_log("CSH","Heater is off ");
-           if($waterOut > $waterIn)lib_log("CSH","No heating is needed "); 
+           if($smokeTemp < 25.0)lib_log("CSH","Heater is off ");
+           if($waterOut < $waterIn)lib_log("CSH","No heating is needed "); 
       }
     }
     else
