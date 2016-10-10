@@ -43,7 +43,7 @@ class controlSaxenHeater {
         lib_remember($labelLatestOrderTime,$snow); 
     }
     $diff = strtotime($snow) - strtotime($prev);
-    lib_log("CSH","Order latest: $snow [$prev] $diff($time1)\n");  
+    lib_log("CSH","Order latest: $snow [$prev] $diff($inertiaTime)\n");  
         
     //========================================================     
     //$waterIn     = lib_getLatestValue($waterIn_sid);
