@@ -29,19 +29,26 @@ $do = (isset($_GET['do']) ? $_GET['do'] : null);
 
 if($do == 'log')
 {
-
+    $ii = 0;
+    $handle = fopen("log/CSH.log", "r");
+    if ($handle) 
+    { 
+        while (($line = fgets($handle)) !== false) 
+        {
+		$ii++;
+		echo("$ii $line <br>");
+	}
+    }
 }
 if($do == 'inc')
 {
-    $sid = 1;
-    $order  = 'NBC_STEPPER_CTRL 1 10 20';
-    insertOrder($sid,$order);
+    $targetTemp = (int)lib_recall($labelTargetTemperature) + 1.0; 	
+    lib_remember($labelTargetTemperature,$snow);
 }
 if($do == 'dec')
 {
-    $sid = 1;
-    $order  = 'NBC_STEPPER_CTRL 2 10 20';
-    insertOrder($sid,$order);
+    $targetTemp = (int)lib_recall($labelTargetTemperature) - 1.0; 	
+    lib_remember($labelTargetTemperature,$snow);
 }
 $targetTemp = (int)lib_recall($labelTargetTemperature); 
 $waterTempOut = lib_getLatestValue(1);
@@ -52,15 +59,19 @@ $indoorTemp   = lib_getLatestValue(2);
 $energy = 100*($waterTempOut - $waterTempIn);
 echo("<body>");
 echo("<h1><a href=\"sxn_csh.php\">Control Saxen Heater</h1><br>");
-//echo("<h2><a href=\"sxn_csh.php?do=inc\">++ </a></h2>");
-//echo("<h2><a href=\"sxn_csh.php?do=dec\">-- </a></h2>");
-echo("<h2><a href=\"sxn_csh.php?do=log\"> Log</a></h2>");
-echo("<h2><a href=\"sxn_csh.php\"> Uppdatera</a></h2>");
-echo("<h1>Energy Consumption $energy</h1> <br>");
-echo("<h1>Target Temperature $targetTemp</h1> <br>");
-echo("<h1>Water Out $waterTempOut</h1> <br>");
-echo("<h1>Water In $waterTempIn</h1> <br>");
-echo("<h1>Outdoor $outdoorTemp</h1> <br>");
-echo("<h1>Indoor $indoorTemp</h1> <br>");
+echo("<p><a href=\"sxn_csh.php?do=inc\">Target + </a></p>");
+echo("<p><a href=\"sxn_csh.php?do=dec\">Target - </a></p>");
+echo("<p><a href=\"sxn_csh.php?do=log\"> Log</a></p>");
+echo("<p><a href=\"sxn_csh.php\"> Uppdatera</a></p>");
+	
+echo("<table border=\"1\">");
+echo("<tr><td>Energy Consumption</td><td>$energy</td></tr>");
+echo("<tr><td>Target Temperature</td><td>$targetTemp</td></tr>");
+echo("<tr><td>Water Out</td><td>$waterTempOut</td></tr>");
+echo("<tr><td>Water In</td><td>$waterTempIn</td></tr>");
+echo("<tr><td>Outdoor</td><td>$outdoorTemp</td></tr>");
+echo("<tr><td>Indoor</td><td>$indoorTemp</td></tr>");
+echo("</table>");
+	
 echo("</body></html>");
 ?>
