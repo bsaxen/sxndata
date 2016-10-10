@@ -346,14 +346,14 @@ function lib_getLatestDerivative($sid)
     return(SXN_NO_VALUE);
 }
 //======================================================================
-function executeSidFunction($sid)
+function lib_executeSidFunction($sid)
 //======================================================================
 {
   // check if any sid function is set active in database
     $sFunc = 'void';
     //$sfunc = checkSidFunction($sid);
-    //if($sid == 999)$sFunc = 'controlSaxenHeater'; // TBD read this from database
-    if($sid == 803)$sFunc = 'autoMowerMap'; // TBD read this from database
+    if($sid == 1)$sFunc = 'controlSaxenHeater'; // TBD read this from database
+    //if($sid == 803)$sFunc = 'autoMowerMap'; // TBD read this from database
     //echo("ecexute $sFunc<br>");
     if($sFunc != 'void')call_user_func(array($sFunc,'doIt'));   
       //if($sFunc != 'void')call_user_func(array($sFunc));   
