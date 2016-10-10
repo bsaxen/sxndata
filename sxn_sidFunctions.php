@@ -96,15 +96,17 @@ class controlSaxenHeater {
         lib_log("CSH","!");
         if($waterOutr < 26.0) // Increase Heat
         {
-              lib_log("CSH","stepper +");
+              lib_log("CSH","stepper + ");
               $order = "NBC_STEPPER_CTRL 1 3 20";
+              lib_log("CSH",$order);
               insertOrder($waterOut_sid,$order);
               lib_remember($labelLatestOrderTime,$snow); 
         }
         if($waterOut > 28.0) // Decrease Heat
         {
-              lib_log("CSH","stepper -");
+              lib_log("CSH","stepper - ");
               $order = "NBC_STEPPER_CTRL 2 3 20";
+              lib_log("CSH",$order);
               insertOrder($waterOut_sid,$order); 
               lib_remember($labelLatestOrderTime,$snow); 
         }
