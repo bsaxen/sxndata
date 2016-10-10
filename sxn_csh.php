@@ -18,11 +18,12 @@ require_once('sxn_sql_lib.php');
 require_once('sxn_lib.php');
 ini_set('display_errors',1);
 error_reporting(E_ALL);
-//echo("START ");
+
 echo("</head> ");
 $docRoot = $_SERVER['DOCUMENT_ROOT'];
-//echo("<br>$docRoot<br>");
 
+$labelTargetTemperature   = "CSH_targetTemperature";
+	
 $do = (isset($_GET['do']) ? $_GET['do'] : null);
 
 
@@ -38,10 +39,12 @@ if($do == 'dec')
     $order  = 'NBC_STEPPER_CTRL 2 10 20';
     insertOrder($sid,$order);
 }
+$targetTemp = (int)lib_recall($labelTargetTemperature); 
 $waterTempOut = lib_getLatestValue(1);
 $waterTempIn  = lib_getLatestValue(3);
 $outdoorTemp  = lib_getLatestValue(9);
 $indoorTemp   = lib_getLatestValue(2);
+	
 $energy = 100*($waterTempOut - $waterTempIn);
 echo("<body>");
 echo("<h1><a href=\"sxn_csh.php\">Control Saxen Heater</h1><br>");
@@ -49,6 +52,7 @@ echo("<h2><a href=\"sxn_csh.php?do=inc\">++ </a></h2>");
 echo("<h2><a href=\"sxn_csh.php?do=dec\">-- </a></h2>");
 echo("<h2><a href=\"sxn_csh.php\"> Uppdatera</a></h2>");
 echo("<h1>Energy Consumption $energy</h1> <br>");
+echo("<h1>Target Temperature $targetTemp</h1> <br>");
 echo("<h1>Water Out $waterTempOut</h1> <br>");
 echo("<h1>Water In $waterTempIn</h1> <br>");
 echo("<h1>Outdoor $outdoorTemp</h1> <br>");
