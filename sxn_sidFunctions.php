@@ -14,15 +14,18 @@ class controlSaxenHeater {
     $dtz = new DateTimeZone("Europe/Stockholm"); //Your timezone
     $now = new DateTime(date("Y-m-d H:i:s"), $dtz);
     $snow =  $now->format("Y-m-d H:i:s");    
-    
+    //================================
+    // Configuration
+    //================================
     $waterIn_sid     = 3;// 3
     $waterOut_sid    = 1;// 1
     $smokeTemp_sid   = 4;// 4
     $outdoorTemp_sid = 6;// 6
     $indoorTemp_sid  = 2;// 2
         
-    $time1 = 120; // sec
-    $time2 = 43200; //sec
+    $lowWaterOut = 26.0;
+    $highWaterOut  = 27.0;
+    $inertiaTime = 180; // sec
         
     // Memeories
     //-------------------------------
@@ -87,14 +90,14 @@ class controlSaxenHeater {
     $logmsg = "SmokeTemp=".$smokeTemp."\n";     lib_log("CSH",$logmsg);
         
     lib_log("CSH","Action:");    
-    if($diff > $time1) // 2 minutes for order to effect the temperature  
+    if($diff > $inertiaTime) // 3 minutes for order to effect the temperature  
     {
     //echo("Algo: $delta<br>");
       lib_log("CSH","*");
       if($smokeTemp > 25.0) // Only control if Heater is ON
       {
         lib_log("CSH","!");
-        if($waterOut < 26.0) // Increase Heat
+        if($waterOut < $lowWaterOut) // Increase Heat
         {
               lib_log("CSH","stepper + ");
               $order = "NBC_STEPPER_CTRL 1 5 20";
@@ -102,7 +105,7 @@ class controlSaxenHeater {
               insertOrder($waterOut_sid,$order);
               lib_remember($labelLatestOrderTime,$snow); 
         }
-        if($waterOut > 28.0) // Decrease Heat
+        if($waterOut > $highWaterOut) // Decrease Heat
         {
               lib_log("CSH","stepper - ");
               $order = "NBC_STEPPER_CTRL 2 5 20";
