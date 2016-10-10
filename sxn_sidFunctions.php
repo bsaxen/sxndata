@@ -94,7 +94,7 @@ class controlSaxenHeater {
       if($smokeTemp > 25.0) // Only control if Heater is ON
       {
         lib_log("CSH","!");
-        if($waterOutr < 26.0) // Increase Heat
+        if($waterOut < 26.0) // Increase Heat
         {
               lib_log("CSH","stepper + ");
               $order = "NBC_STEPPER_CTRL 1 5 20";
