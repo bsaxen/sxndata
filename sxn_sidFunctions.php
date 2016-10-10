@@ -83,6 +83,8 @@ class controlSaxenHeater {
     $logmsg = "WaterIn     = ".$waterIn."\n";       lib_log("CSH",$logmsg);
     $logmsg = "WaterOut    = ".$waterOut."\n";      lib_log("CSH",$logmsg);
     $logmsg = "TargetTemp  = ".$targetTemp."\n";    lib_log("CSH",$logmsg);
+    $logmsg = "lowTemp     = ".$lowWaterOut."\n";   lib_log("CSH",$logmsg);
+    $logmsg = "highTemp    = ".$highWaterOut."\n";  lib_log("CSH",$logmsg);
     $logmsg = "OutdoorTemp = ".$outdoorTemp."\n";   lib_log("CSH",$logmsg);
     $logmsg = "SmokeTemp   = ".$smokeTemp."\n";     lib_log("CSH",$logmsg);
     $logmsg = "Energy      = ".$energy."\n";        lib_log("CSH",$logmsg);
