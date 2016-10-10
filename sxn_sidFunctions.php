@@ -88,7 +88,6 @@ class controlSaxenHeater {
       lib_log("CSH","Wake Up ");
       if($smokeTemp > 25.0 && $waterOut > $waterIn) // Only control if Heater is ON
       {
-        lib_log("CSH","!");
         if($waterOut < $lowWaterOut) // Increase Heat
         {
               $steps = ($highWaterOut + $lowWaterOut)/2.0 - $waterOut;
@@ -104,7 +103,7 @@ class controlSaxenHeater {
               insertOrder($waterOut_sid,$order);
               lib_remember($labelLatestOrderTime,$snow); 
         }
-        if($waterOut > $highWaterOut) // Decrease Heat
+        else if($waterOut > $highWaterOut) // Decrease Heat
         {
               $steps = $waterOut - ($highWaterOut + $lowWaterOut)/2.0;
               $steps = round($steps*5);
@@ -119,6 +118,12 @@ class controlSaxenHeater {
               insertOrder($waterOut_sid,$order); 
               lib_remember($labelLatestOrderTime,$snow); 
         }
+        else
+        {
+            lib_log("CSH"," Temperature within target ");
+        }
+          
+         
       }
       else
       {
