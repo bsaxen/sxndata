@@ -20,12 +20,12 @@ class controlSaxenHeater {
     $waterIn_sid     = 3;// 3
     $waterOut_sid    = 1;// 1
     $smokeTemp_sid   = 4;// 4
-    $outdoorTemp_sid = 6;// 6
+    $outdoorTemp_sid = 9;// Garage indoor
     $indoorTemp_sid  = 2;// 2
         
 
         
-    // Memeories
+    // Memories
     //-------------------------------
     $labelTargetTemperature   = "CSH_targetTemperature";
     $labelLatestOrderTime     = "CSH_latestOrderTime";
