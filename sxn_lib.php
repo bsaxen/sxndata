@@ -121,7 +121,7 @@ function lib_listIpFiles($mode,$filename)
 function lib_log($logname,$item)
 //======================================= 
 {
-   $filename = $logname.'.log';
+   $filename = 'log/'.$logname.'.log';
    if (file_exists($filename))
    {
       $fh = fopen($filename, "a");
@@ -140,7 +140,7 @@ function lib_log($logname,$item)
 function lib_remember($memid,$item)
 //======================================= 
 {
-   $filename = $memid.'.mem';
+   $filename = 'sidfunctions/'.$memid.'.mem';
    if (file_exists($filename))
    {
       $fh = fopen($filename, "w");
@@ -160,7 +160,7 @@ function lib_recall($memid)
 //======================================= 
 {
    $data = 'void';
-   $filename = $memid.'.mem';
+   $filename = 'sidfunctions/'.$memid.'.mem';
    if (file_exists($filename)) 
    {
       $fh = fopen($filename, "r");
