@@ -100,7 +100,7 @@ class controlSaxenHeater {
         if($waterOut < $lowWaterOut) // Increase Heat
         {
               $steps = ($highWaterOut + $lowWaterOut)/2.0 - $waterOut;
-              $steps = round($steps*5);
+              $steps = round($steps*4);
               if($steps < 1 || $steps > 50)
               {
                 $steps = 1;
@@ -115,7 +115,7 @@ class controlSaxenHeater {
         else if($waterOut > $highWaterOut) // Decrease Heat
         {
               $steps = $waterOut - ($highWaterOut + $lowWaterOut)/2.0;
-              $steps = round($steps*5);
+              $steps = round($steps*4);
               if($steps < 1 || $steps > 50)
               {
                 $steps = 1;
