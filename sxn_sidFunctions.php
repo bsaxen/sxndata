@@ -34,7 +34,7 @@ class controlSaxenHeater {
     $targetTemp = (int)lib_recall($labelTargetTemperature); 
     $lowWaterOut   = $targetTemp - 1.0; //26.0;
     $highWaterOut  = $targetTemp + 1.0; //28.0;
-    $inertiaTime   = 180; // sec
+    $inertiaTime   = 360; // sec
         
         
     // Recall time and date for latest order
