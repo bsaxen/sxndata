@@ -40,7 +40,7 @@ if($do == 'log')
         while (($line = fgets($handle)) !== false) 
         {
 		$ii++;
-		echo("$ii $line <br>");
+		echo("<p>$ii $line</p>");
 	}
     }
 }
