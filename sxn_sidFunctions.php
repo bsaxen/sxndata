@@ -108,7 +108,7 @@ if($smokeTemp < 42.0 && $smokeDir == 1)
 {
     lib_remember("CSH_smokeDir",2);
     $timeBurnerOff = lib_recall("CSH_timeBurnerOff");
-    $freqBurnerOff = strtotime(now) - strtotime($timeBurnerOff);
+    $freqBurnerOff = strtotime($now) - strtotime($timeBurnerOff);
     lib_remember("CSH_timeBurnerOff",$now);
     $logmsg = "Burner OFF ".$freqBurnerOff."\n"; lib_log("CSH",$logmsg);
 }
