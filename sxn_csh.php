@@ -55,6 +55,7 @@ if($do == 'dec')
     lib_remember($labelTargetTemperature,$targetTemp);
 }
 $targetTemp = (int)lib_recall($labelTargetTemperature); 
+$burnerStatus = (int)lib_recall("CSH_smokeDir"); 
 $waterTempOut = lib_getLatestValue(1);
 $waterTempIn  = lib_getLatestValue(3);
 $outdoorTemp  = lib_getLatestValue(9);
@@ -72,6 +73,7 @@ echo("<tr><td><a href=\"sxn_csh.php?do=csl\"> Clear Log</a></td></tr>");
 echo("<tr><td><a href=\"sxn_csh.php\"> Uppdatera</a></td></tr>");
 echo("</table>");	
 echo("<table border=\"1\">");
+echo("<tr><td>Burner Status</td><td>$burnerStatus</td></tr>");
 echo("<tr><td>Energy Consumption</td><td>$energy</td></tr>");
 echo("<tr><td>Target Temperature</td><td>$targetTemp</td></tr>");
 echo("<tr><td>Water Out</td><td>$waterTempOut</td></tr>");
