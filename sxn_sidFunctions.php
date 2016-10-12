@@ -88,8 +88,8 @@ class controlSaxenHeater {
     $logmsg = "OutdoorTemp = ".$outdoorTemp."\n";   lib_log("CSH",$logmsg);
     $logmsg = "SmokeTemp   = ".$smokeTemp."\n";     lib_log("CSH",$logmsg);
     $logmsg = "Energy      = ".$energy."\n";        lib_log("CSH",$logmsg);
-    $smokeDir = lib_recall("CSH_freqBurnerOn");
-    $smokeDir = lib_recall("CSH_freqBurnerOff");
+    $freqBurnerOn = lib_recall("CSH_freqBurnerOn");
+    $freqBurnerOff = lib_recall("CSH_freqBurnerOff");
     $logmsg = "Freq On     = ".$freqBurnerOn."\n";  lib_log("CSH",$logmsg);
     $logmsg = "Freq Off    = ".$freqBurnerOff."\n"; lib_log("CSH",$logmsg);
         
