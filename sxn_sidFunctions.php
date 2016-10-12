@@ -100,16 +100,16 @@ if($smokeTemp > 42.0 && $smokeDir == 2)
 {
     lib_remember("CSH_smokeDir",1);
     $timeBurnerOn = lib_recall("CSH_timeBurnerOn");
-    $freqBurnerOn = strtotime($now) - strtotime($timeBurnerOn);
-    lib_remember("CSH_timeBurnerOn",$now);
+    $freqBurnerOn = strtotime($snow) - strtotime($timeBurnerOn);
+    lib_remember("CSH_timeBurnerOn",$snow);
     $logmsg = "Burner ON ".$freqBurnerOn."\n";  lib_log("CSH",$logmsg);
 }
 if($smokeTemp < 42.0 && $smokeDir == 1)
 {
     lib_remember("CSH_smokeDir",2);
     $timeBurnerOff = lib_recall("CSH_timeBurnerOff");
-    $freqBurnerOff = strtotime($now) - strtotime($timeBurnerOff);
-    lib_remember("CSH_timeBurnerOff",$now);
+    $freqBurnerOff = strtotime($snow) - strtotime($timeBurnerOff);
+    lib_remember("CSH_timeBurnerOff",$snow);
     $logmsg = "Burner OFF ".$freqBurnerOff."\n"; lib_log("CSH",$logmsg);
 }
         
