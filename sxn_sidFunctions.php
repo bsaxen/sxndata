@@ -95,15 +95,16 @@ if($smokeTemp > 42.0 && $smokeDir == 1)
     $smokeDir = 2;
     $timeBurnerOn_prev = $timeBurnerOn;
     $timeBurnerOn = $now;
-    $freqBurnerOn = strtotime($now) - strtotime($timeBUrnerOn);
-    $logmsg = "Burner ON ".$freqBurnerOn."\n";
+    $freqBurnerOn = strtotime($now) - strtotime($timeBurnerOn);
+    $logmsg = "Burner ON ".$freqBurnerOn."\n";  lib_log("CSH",$logmsg);
 }
 if($smokeTemp < 42.0 && $smokeDir == 2)
 {
     $smokeDir = 1;
     $timeBurnerOff_prev = $timeBurnerOff;
     $timeBurnerOff = $now;
-    $logmsg = "Burner OFF ".$freqBurnerOff."\n";
+    $freqBurnerOff = strtotime(now) - strtotime($timeBurnerOff);
+    $logmsg = "Burner OFF ".$freqBurnerOff."\n"; lib_log("CSH",$logmsg);
 }
         
     if($diff > $inertiaTime) // 3 minutes for order to effect the temperature  
