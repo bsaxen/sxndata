@@ -88,6 +88,10 @@ class controlSaxenHeater {
     $logmsg = "OutdoorTemp = ".$outdoorTemp."\n";   lib_log("CSH",$logmsg);
     $logmsg = "SmokeTemp   = ".$smokeTemp."\n";     lib_log("CSH",$logmsg);
     $logmsg = "Energy      = ".$energy."\n";        lib_log("CSH",$logmsg);
+    $smokeDir = lib_recall("CSH_freqBurnerOn");
+    $smokeDir = lib_recall("CSH_freqBurnerOff");
+    $logmsg = "Freq On     = ".$freqBurnerOn."\n";  lib_log("CSH",$logmsg);
+    $logmsg = "Freq Off    = ".$freqBurnerOff."\n"; lib_log("CSH",$logmsg);
         
     
     $smokeDir = lib_recall("CSH_smokeDir");
@@ -103,6 +107,7 @@ if($smokeTemp > 42.0 && $smokeDir == 2)
     $freqBurnerOn = strtotime($snow) - strtotime($timeBurnerOn);
     lib_remember("CSH_timeBurnerOn",$snow);
     $logmsg = "Burner ON ".$freqBurnerOn."\n";  lib_log("CSH",$logmsg);
+    lib_remember("CSH_freqBurnerOn",$freqBurnerOn);
 }
 if($smokeTemp < 42.0 && $smokeDir == 1)
 {
@@ -111,6 +116,7 @@ if($smokeTemp < 42.0 && $smokeDir == 1)
     $freqBurnerOff = strtotime($snow) - strtotime($timeBurnerOff);
     lib_remember("CSH_timeBurnerOff",$snow);
     $logmsg = "Burner OFF ".$freqBurnerOff."\n"; lib_log("CSH",$logmsg);
+    lib_remember("CSH_freqBurnerOff",$freqBurnerOff);
 }
         
     if($diff > $inertiaTime) // 3 minutes for order to effect the temperature  
