@@ -96,17 +96,17 @@ class controlSaxenHeater {
     if($smokeDir == 2)lib_log("CSH","Burner OFF\n");
     lib_log("CSH","Action:");
         
-if($smokeTemp > 42.0 && $smokeDir == 1)
+if($smokeTemp > 42.0 && $smokeDir == 2)
 {
-    lib_remember("CSH_smokeDir",2);
+    lib_remember("CSH_smokeDir",1);
     $timeBurnerOn = lib_recall("CSH_timeBurnerOn");
     $freqBurnerOn = strtotime($now) - strtotime($timeBurnerOn);
     lib_remember("CSH_timeBurnerOn",$now);
     $logmsg = "Burner ON ".$freqBurnerOn."\n";  lib_log("CSH",$logmsg);
 }
-if($smokeTemp < 42.0 && $smokeDir == 2)
+if($smokeTemp < 42.0 && $smokeDir == 1)
 {
-    lib_remember("CSH_smokeDir",1);
+    lib_remember("CSH_smokeDir",2);
     $timeBurnerOff = lib_recall("CSH_timeBurnerOff");
     $freqBurnerOff = strtotime(now) - strtotime($timeBurnerOff);
     lib_remember("CSH_timeBurnerOff",$now);
