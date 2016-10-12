@@ -95,13 +95,15 @@ if($smokeTemp > 42.0 && $smokeDir == 1)
     $smokeDir = 2;
     $timeBurnerOn_prev = $timeBurnerOn;
     $timeBurnerOn = $now;
-
+    $freqBurnerOn = strtotime($now) - strtotime($timeBUrnerOn);
+    $logmsg = "Burner ON ".$freqBurnerOn."\n";
 }
 if($smokeTemp < 42.0 && $smokeDir == 2)
 {
     $smokeDir = 1;
     $timeBurnerOff_prev = $timeBurnerOff;
     $timeBurnerOff = $now;
+    $logmsg = "Burner OFF ".$freqBurnerOff."\n";
 }
         
     if($diff > $inertiaTime) // 3 minutes for order to effect the temperature  
