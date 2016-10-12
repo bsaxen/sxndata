@@ -91,7 +91,7 @@ class controlSaxenHeater {
         
     lib_log("CSH","Action:");
     $smokeDir = lib_recall("CSH_smokeDir");
-    $if($smokeDir == 0)$smokeDir = 1;
+    $if($smokeDir == 'void')$smokeDir = 1;
 if($smokeTemp > 42.0 && $smokeDir == 1)
 {
     lib_remember("CSH_smokeDir",2);
