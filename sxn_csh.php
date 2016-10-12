@@ -31,19 +31,7 @@ if($do == 'csl')
 {
 	system("rm -f log/CSH.log");
 }
-if($do == 'log')
-{
-    $ii = 0;
-    $handle = fopen("log/CSH.log", "r");
-    if ($handle) 
-    { 
-        while (($line = fgets($handle)) !== false) 
-        {
-		$ii++;
-		echo("<p>$ii $line</p>");
-	}
-    }
-}
+
 if($do == 'inc')
 {
     $targetTemp = (int)lib_recall($labelTargetTemperature) + 1.0; 	
@@ -84,6 +72,20 @@ echo("<tr><td>Outdoor</td><td>$outdoorTemp</td></tr>");
 echo("<tr><td>Indoor</td><td>$indoorTemp</td></tr>");
 echo("<tr><td>Smoke</td><td>$smokeTemp</td></tr>");
 echo("</table>");
-	
+if($do == 'log')
+{
+    $ii = 0;
+    $handle = fopen("log/CSH.log", "r");
+    if ($handle) 
+    { 
+	echo("<table border=\"1\">");
+        while (($line = fgets($handle)) !== false) 
+        {
+		$ii++;
+		echo("<p><tr><td>$ii $line</td></tr></p>");
+	}
+	echo("</table>");
+    }
+}	
 echo("</body></html>");
 ?>
