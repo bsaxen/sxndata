@@ -90,6 +90,20 @@ class controlSaxenHeater {
     $logmsg = "Energy      = ".$energy."\n";        lib_log("CSH",$logmsg);
         
     lib_log("CSH","Action:");    
+if($smokeTemp > 42.0 && $smokeDir == 1)
+{
+    $smokeDir = 2;
+    $timeBurnerOn_prev = $timeBurnerOn;
+    $timeBurnerOn = $now;
+
+}
+if($smokeTemp < 42.0 && $smokeDir == 2)
+{
+    $smokeDir = 1;
+    $timeBurnerOff_prev = $timeBurnerOff;
+    $timeBurnerOff = $now;
+}
+        
     if($diff > $inertiaTime) // 3 minutes for order to effect the temperature  
     {
      
