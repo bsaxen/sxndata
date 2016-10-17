@@ -60,6 +60,11 @@ class controlSaxenHeater {
         lib_log("CSH","No value for WaterOut\n");
         return;
     }
+    if($waterOut < ($targetTemp -7.0))
+    {
+        lib_log("CSH","Un-realistic value for WaterOut\n");
+        return;
+    }
     $smokeTemp   = lib_getLatestValue($smokeTemp_sid);
     if($smokeTemp == SXN_NO_VALUE)
     {
