@@ -9,7 +9,8 @@ class controlSaxenHeater {
 // Control of Heating system in Kil, Runnevål
 //======================================================
     function doIt() {
-    lib_log("CSH","----- Start -----\n");          
+    lib_log("CSH","----- Start -----\n");
+    return;
     // Get current time and date
     $dtz = new DateTimeZone("Europe/Stockholm"); //Your timezone
     $now = new DateTime(date("Y-m-d H:i:s"), $dtz);
