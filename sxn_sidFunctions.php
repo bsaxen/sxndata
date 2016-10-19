@@ -134,6 +134,7 @@ if($smokeTemp < 42.0 && $smokeDir == 1)
       {
         if($waterOut < $lowWaterOut) // Increase Heat
         {
+              lib_log("CSH","C_UP");
               $steps = ($highWaterOut + $lowWaterOut)/2.0 - $waterOut;
               $steps = round($steps*4);
               if($steps < 1 || $steps > 50)
@@ -149,6 +150,7 @@ if($smokeTemp < 42.0 && $smokeDir == 1)
         }
         else if($waterOut > $highWaterOut) // Decrease Heat
         {
+              lib_log("CSH","C_DOWN");
               $steps = $waterOut - ($highWaterOut + $lowWaterOut)/2.0;
               $steps = round($steps*4);
               if($steps < 1 || $steps > 50)
