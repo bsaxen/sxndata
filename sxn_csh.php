@@ -86,7 +86,7 @@ if($do == 'log')
         while (($line = fgets($handle)) !== false) 
         {
 		$ii++;
-		if($line == "C_UP)
+		if($line == "C_UP")
 			echo("<p><tr><td bgcolor=\"#c13710\" >$ii $line</td></tr></p>");
 		else if($line == "C_DOWN")
 			echo("<p><tr><td bgcolor=\"#37a30e\" >$ii $line</td></tr></p>");
