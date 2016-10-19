@@ -63,8 +63,8 @@ echo("<tr><td><a href=\"sxn_csh.php?do=csl\"> Clear Log</a></td></tr>");
 echo("<tr><td><a href=\"sxn_csh.php\"> Uppdatera</a></td></tr>");
 echo("</table>");	
 echo("<table border=\"1\">");
-if($burner_ON_OFF=="ON")(echo("<tr><td>Burner Status</td><td bgcolor=\"#37a30e\">$burner_ON_OFF</td></tr>");
-if($burner_ON_OFF=="OFF")(echo("<tr><td>Burner Status</td><td bgcolor=\"#c13710\">$burner_ON_OFF</td></tr>");
+if($burner_ON_OFF=="ON")echo("<tr><td>Burner Status</td><td bgcolor=\"#37a30e\">$burner_ON_OFF</td></tr>");
+if($burner_ON_OFF=="OFF")echo("<tr><td>Burner Status</td><td bgcolor=\"#c13710\">$burner_ON_OFF</td></tr>");
 echo("<tr><td>Energy Consumption</td><td>$energy</td></tr>");
 echo("<tr><td>Target Temperature</td><td>$targetTemp</td></tr>");
 if($waterTempOut < 25.0)
